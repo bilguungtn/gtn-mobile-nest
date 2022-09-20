@@ -1,0 +1,62 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+model bill_tbl {
+    bill_record_id Int       @id @default(autoincrement()) @db.UnsignedInt
+    bill_id        String?   @db.VarChar(20)
+    target_name    String?   @db.VarChar(200)
+    month          Int?
+    item_name      String?   @db.VarChar(120)
+    price          Int?
+    bill_url       String?   @db.VarChar(1000)
+    user_id        String?
+    user_tbl       user_tbl? @relation(fields: [user_id], references: [user_id])
+
+    @@index([user_id], map: "bill_tbl_user_id_fkey")
+}
+
+model user_history_tbl {
+    user_history_id Int       @id @default(autoincrement()) @db.UnsignedInt
+    zip_file_name   String?   @db.VarChar(100)
+    data_table_name String?   @db.VarChar(50)
+    target_dt       DateTime? @db.DateTime(0)
+    create_dt       DateTime? @db.DateTime(0)
+    delete_dt       DateTime? @db.DateTime(0)
+    log_message     String?   @db.VarChar(1000)
+}
+
+model user_tbl {
+    user_record_id  Int        @id @default(autoincrement()) @db.UnsignedInt
+    user_id         String     @unique @db.VarChar(10)
+    sim_number      String?    @db.VarChar(11)
+    e_mail          String     @db.VarChar(256)
+    user_name       String?    @db.VarChar(255)
+    user_name_kana  String?    @db.VarChar(255)
+    zip_code        String?    @db.Char(7)
+    prefectures     String?    @db.VarChar(30)
+    address_1       String?    @db.VarChar(255)
+    address_2       String?    @db.VarChar(255)
+    address_3       String?    @db.VarChar(255)
+    address_4       String?    @db.VarChar(255)
+    address_5       String?    @db.VarChar(255)
+    phone           String?    @db.VarChar(11)
+    mobile_phone    String?    @db.VarChar(11)
+    billing_id      String?    @db.VarChar(12)
+    service_id      String?    @db.VarChar(10)
+    service_type    Int?
+    plan            String?    @db.VarChar(255)
+    plan_status     Int?       @db.UnsignedInt
+    signin_dt       DateTime?  @db.Date
+    cancel_dt       DateTime?  @db.Date
+    use_start_dt    DateTime?  @db.Date
+    use_end_dt      DateTime?  @db.Date
+    charge_start_dt DateTime?  @db.Date
+    charge_end_dt   DateTime?  @db.Date
+    bill_tbl        bill_tbl[]
+}

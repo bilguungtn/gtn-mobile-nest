@@ -1,0 +1,234 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model addresses {
+  postal_code String    @db.VarChar(255)
+  address     String    @db.VarChar(255)
+  profile_id  BigInt    @db.UnsignedBigInt
+  created_at  DateTime? @db.Timestamp(0)
+  updated_at  DateTime? @updatedAt @db.Timestamp(0)
+  profiles    profiles  @relation(fields: [profile_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "addresses_profile_id_foreign")
+
+  @@index([profile_id], map: "addresses_profile_id_foreign")
+  @@ignore
+}
+
+model call_charges {
+  phone_number      String   @db.VarChar(255)
+  date              DateTime @db.Date
+  amount            Float
+  carrier_type_code Int
+  created_at        DateTime @default(now()) @db.Timestamp(0)
+  id                BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+
+  @@unique([phone_number, date], map: "call_charges_phone_number_date_unique")
+}
+
+model cell_phone_company_login_details {
+  claim_code        String @unique(map: "cell_phone_company_login_details_claim_code_unique") @db.VarChar(255)
+  login_id          String @db.VarChar(255)
+  carrier_type_code Int
+}
+
+model data_charges {
+  id                       Int                        @id @default(autoincrement()) @db.UnsignedInt
+  capacity                 Float
+  price                    Int
+  available_count          Int
+  data_charge_histories    data_charge_histories[]
+  data_charges_plan_groups data_charges_plan_groups[] @ignore
+}
+
+model data_charge_histories {
+  id             Int          @id @default(autoincrement()) @db.UnsignedInt
+  profile_id     BigInt       @db.UnsignedBigInt
+  data_charge_id Int          @db.UnsignedInt
+  created_at     DateTime?    @db.Timestamp(0)
+  updated_at     DateTime?    @db.Timestamp(0)
+  data_charges   data_charges @relation(fields: [data_charge_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "data_charge_histories_data_charge_id_foreign")
+  profiles       profiles     @relation(fields: [profile_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "data_charge_histories_profile_id_foreign")
+
+  @@index([data_charge_id], map: "data_charge_histories_data_charge_id_foreign")
+  @@index([profile_id], map: "data_charge_histories_profile_id_foreign")
+}
+
+model data_traffics {
+  phone_number      String   @db.VarChar(255)
+  date              DateTime @db.Date
+  amount            Float
+  carrier_type_code Int
+  created_at        DateTime @default(now()) @db.Timestamp(0)
+  id                BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+
+  @@unique([phone_number, date], map: "data_traffics_phone_number_date_unique")
+}
+
+model data_traffic_charges {
+  phone_number      String   @db.VarChar(255)
+  date              DateTime @db.Date
+  amount            Float
+  carrier_type_code Int
+  created_at        DateTime @default(now()) @db.Timestamp(0)
+  id                BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+
+  @@unique([phone_number, date], map: "data_traffic_charges_phone_number_date_unique")
+}
+
+model international_call_charges {
+  phone_number      String   @db.VarChar(255)
+  date              DateTime @db.Date
+  amount            Float
+  carrier_type_code Int
+  created_at        DateTime @default(now()) @db.Timestamp(0)
+  id                BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+
+  @@unique([phone_number, date], map: "international_call_charges_phone_number_date_unique")
+}
+
+model profiles {
+  id                    BigInt                  @id @db.UnsignedBigInt
+  name                  String                  @db.VarChar(255)
+  name_kana             String                  @db.VarChar(255)
+  birthday              DateTime                @db.Date
+  contact_phone_number  String                  @db.VarChar(255)
+  cell_phone_number     String                  @db.VarChar(255)
+  email                 String                  @unique(map: "profiles_email_unique") @db.VarChar(255)
+  created_at            DateTime?               @db.Timestamp(0)
+  updated_at            DateTime?               @updatedAt @db.Timestamp(0)
+  addresses             addresses[]             @ignore
+  data_charge_histories data_charge_histories[]
+  sims                  sims[]
+  visas                 visas[]                 @ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model data_charges_plan_groups {
+  data_charge_id Int          @db.UnsignedInt
+  plan_group_id  Int          @db.UnsignedInt
+  data_charges   data_charges @relation(fields: [data_charge_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "data_charges_plan_groups_data_charge_id_foreign")
+  plan_groups    plan_groups  @relation(fields: [plan_group_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "data_charges_plan_groups_plan_group_id_foreign")
+
+  @@index([data_charge_id], map: "data_charges_plan_groups_data_charge_id_foreign")
+  @@index([plan_group_id], map: "data_charges_plan_groups_plan_group_id_foreign")
+  @@ignore
+}
+
+model failed_jobs {
+  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  uuid       String   @unique(map: "failed_jobs_uuid_unique") @db.VarChar(255)
+  connection String   @db.Text
+  queue      String   @db.Text
+  payload    String   @db.LongText
+  exception  String   @db.LongText
+  failed_at  DateTime @default(now()) @db.Timestamp(0)
+}
+
+model gtn_id_tokens {
+  id         Int      @id @default(autoincrement()) @db.UnsignedInt
+  token      String   @db.Text
+  expired_at DateTime @db.DateTime(0)
+}
+
+model migrations {
+  id        Int    @id @default(autoincrement()) @db.UnsignedInt
+  migration String @db.VarChar(255)
+  batch     Int
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model password_resets {
+  email      String    @db.VarChar(255)
+  token      String    @db.VarChar(255)
+  created_at DateTime? @db.Timestamp(0)
+
+  @@index([email], map: "password_resets_email_index")
+  @@ignore
+}
+
+model plan_groups {
+  id                                                                                      Int                        @id @db.UnsignedInt
+  deadline_day                                                                            String?                    @db.VarChar(255)
+  deadline_time                                                                           String?                    @db.VarChar(255)
+  data_charges_plan_groups                                                                data_charges_plan_groups[] @ignore
+  plan_groups_relations_plan_groupsToplan_groups_relations_available_change_plan_group_id plan_groups_relations[]    @relation("plan_groupsToplan_groups_relations_available_change_plan_group_id") @ignore
+  plan_groups_relations_plan_groupsToplan_groups_relations_current_plan_group_id          plan_groups_relations[]    @relation("plan_groupsToplan_groups_relations_current_plan_group_id") @ignore
+  plans                                                                                   plans[]
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model plan_groups_relations {
+  current_plan_group_id                                                         Int         @db.UnsignedInt
+  available_change_plan_group_id                                                Int         @db.UnsignedInt
+  plan_groups_plan_groupsToplan_groups_relations_available_change_plan_group_id plan_groups @relation("plan_groupsToplan_groups_relations_available_change_plan_group_id", fields: [available_change_plan_group_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "plan_groups_relations_available_change_plan_group_id_foreign")
+  plan_groups_plan_groupsToplan_groups_relations_current_plan_group_id          plan_groups @relation("plan_groupsToplan_groups_relations_current_plan_group_id", fields: [current_plan_group_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "plan_groups_relations_current_plan_group_id_foreign")
+
+  @@index([available_change_plan_group_id], map: "plan_groups_relations_available_change_plan_group_id_foreign")
+  @@index([current_plan_group_id], map: "plan_groups_relations_current_plan_group_id_foreign")
+  @@ignore
+}
+
+model plans {
+  id                String      @id @db.VarChar(255)
+  name              String      @db.VarChar(255)
+  happiness_name    String      @db.VarChar(255)
+  plan_group_id     Int         @db.UnsignedInt
+  capacity          Float?
+  carrier_type_code Int         @default(99)
+  price             Int?
+  plan_groups       plan_groups @relation(fields: [plan_group_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "plans_plan_group_id_foreign")
+
+  @@index([plan_group_id], map: "plans_plan_group_id_foreign")
+}
+
+model sims {
+  id           Int       @id @default(autoincrement()) @db.UnsignedInt
+  sim_number   String    @db.VarChar(255)
+  happiness_id String    @unique(map: "sims_happiness_id_unique") @db.VarChar(255)
+  canceled_at  DateTime? @db.DateTime(0)
+  profile_id   BigInt    @db.UnsignedBigInt
+  created_at   DateTime? @db.Timestamp(0)
+  updated_at   DateTime? @db.Timestamp(0)
+  profiles     profiles  @relation(fields: [profile_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "sims_profile_id_foreign")
+
+  @@index([profile_id], map: "sims_profile_id_foreign")
+}
+
+model user_identification_admin_tokens {
+  id         Int      @id @default(autoincrement()) @db.UnsignedInt
+  token      String   @db.Text
+  expired_at DateTime @db.DateTime(0)
+}
+
+model videos {
+  id            Int    @id @default(autoincrement()) @db.UnsignedInt
+  video_id      String @db.VarChar(255)
+  thumb         String @db.VarChar(255)
+  en_title      String @db.VarChar(255)
+  id_title      String @db.VarChar(255)
+  ja_title      String @db.VarChar(255)
+  ko_title      String @db.VarChar(255)
+  ne_title      String @db.VarChar(255)
+  vi_title      String @db.VarChar(255)
+  zh_Hans_title String @db.VarChar(255)
+  zh_Hant_title String @db.VarChar(255)
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model visas {
+  classification_code     Int       @default(999)
+  period_of_validity_date DateTime? @db.Date
+  profile_id              BigInt    @db.UnsignedBigInt
+  created_at              DateTime? @db.Timestamp(0)
+  updated_at              DateTime? @db.Timestamp(0)
+  profiles                profiles  @relation(fields: [profile_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "visas_profile_id_foreign")
+
+  @@index([profile_id], map: "visas_profile_id_foreign")
+  @@ignore
+}
