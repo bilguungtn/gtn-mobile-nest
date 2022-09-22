@@ -11,7 +11,7 @@ datasource db {
 model addresses {
   postal_code String    @db.VarChar(255)
   address     String    @db.VarChar(255)
-  profile_id  BigInt    @db.UnsignedBigInt
+  profile_id  Int       @db.UnsignedInt
   created_at  DateTime? @db.Timestamp(0)
   updated_at  DateTime? @updatedAt @db.Timestamp(0)
   profiles    profiles  @relation(fields: [profile_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "addresses_profile_id_foreign")
@@ -26,7 +26,7 @@ model call_charges {
   amount            Float
   carrier_type_code Int
   created_at        DateTime @default(now()) @db.Timestamp(0)
-  id                BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  id                Int   @id @default(autoincrement()) @db.UnsignedInt
 
   @@unique([phone_number, date], map: "call_charges_phone_number_date_unique")
 }
@@ -48,7 +48,7 @@ model data_charges {
 
 model data_charge_histories {
   id             Int          @id @default(autoincrement()) @db.UnsignedInt
-  profile_id     BigInt       @db.UnsignedBigInt
+  profile_id     Int          @db.UnsignedInt
   data_charge_id Int          @db.UnsignedInt
   created_at     DateTime?    @db.Timestamp(0)
   updated_at     DateTime?    @db.Timestamp(0)
@@ -65,7 +65,7 @@ model data_traffics {
   amount            Float
   carrier_type_code Int
   created_at        DateTime @default(now()) @db.Timestamp(0)
-  id                BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  id                Int      @id @default(autoincrement()) @db.UnsignedInt
 
   @@unique([phone_number, date], map: "data_traffics_phone_number_date_unique")
 }
@@ -76,7 +76,7 @@ model data_traffic_charges {
   amount            Float
   carrier_type_code Int
   created_at        DateTime @default(now()) @db.Timestamp(0)
-  id                BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  id                Int      @id @default(autoincrement()) @db.UnsignedInt
 
   @@unique([phone_number, date], map: "data_traffic_charges_phone_number_date_unique")
 }
@@ -87,13 +87,13 @@ model international_call_charges {
   amount            Float
   carrier_type_code Int
   created_at        DateTime @default(now()) @db.Timestamp(0)
-  id                BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  id                Int      @id @default(autoincrement()) @db.UnsignedInt
 
   @@unique([phone_number, date], map: "international_call_charges_phone_number_date_unique")
 }
 
 model profiles {
-  id                    BigInt                  @id @db.UnsignedBigInt
+  id                    Int                     @id @db.UnsignedInt
   name                  String                  @db.VarChar(255)
   name_kana             String                  @db.VarChar(255)
   birthday              DateTime                @db.Date
@@ -121,7 +121,7 @@ model data_charges_plan_groups {
 }
 
 model failed_jobs {
-  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  id         Int      @id @default(autoincrement()) @db.UnsignedInt
   uuid       String   @unique(map: "failed_jobs_uuid_unique") @db.VarChar(255)
   connection String   @db.Text
   queue      String   @db.Text
@@ -192,9 +192,9 @@ model sims {
   sim_number   String    @db.VarChar(255)
   happiness_id String    @unique(map: "sims_happiness_id_unique") @db.VarChar(255)
   canceled_at  DateTime? @db.DateTime(0)
-  profile_id   BigInt    @db.UnsignedBigInt
-  created_at   DateTime? @db.Timestamp(0)
-  updated_at   DateTime? @db.Timestamp(0)
+  profile_id   Int       @db.UnsignedInt
+  created_at   DateTime? @default(now()) @db.Timestamp(0)
+  updated_at   DateTime? @default(now()) @updatedAt @db.Timestamp(0)
   profiles     profiles  @relation(fields: [profile_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "sims_profile_id_foreign")
 
   @@index([profile_id], map: "sims_profile_id_foreign")
@@ -224,11 +224,22 @@ model videos {
 model visas {
   classification_code     Int       @default(999)
   period_of_validity_date DateTime? @db.Date
-  profile_id              BigInt    @db.UnsignedBigInt
-  created_at              DateTime? @db.Timestamp(0)
-  updated_at              DateTime? @db.Timestamp(0)
+  profile_id              Int       @db.UnsignedInt
+  created_at              DateTime? @default(now()) @db.Timestamp(0)
+  updated_at              DateTime? @default(now()) @updatedAt @db.Timestamp(0)
   profiles                profiles  @relation(fields: [profile_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "visas_profile_id_foreign")
 
   @@index([profile_id], map: "visas_profile_id_foreign")
   @@ignore
+}
+
+model users {
+  id                Int       @id @default(autoincrement()) @db.UnsignedInt
+  name              String    @db.VarChar(255)
+  email             String    @unique(map: "users_email_unique") @db.VarChar(255)
+  email_verified_at DateTime? @db.Timestamp(0)
+  password          String    @db.VarChar(255)
+  remember_token    String?   @db.VarChar(100)
+  created_at        DateTime? @default(now()) @db.Timestamp(0)
+  updated_at        DateTime? @default(now()) @updatedAt @db.Timestamp(0)
 }
