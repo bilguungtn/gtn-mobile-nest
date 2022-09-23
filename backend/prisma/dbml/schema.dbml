@@ -1,0 +1,183 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table call_charges {
+  phone_number String [not null]
+  date DateTime [not null]
+  amount Float [not null]
+  carrier_type_code Int [not null]
+  created_at DateTime [default: `now()`, not null]
+  id Int [pk, increment]
+
+  indexes {
+    (phone_number, date) [unique]
+  }
+}
+
+Table cell_phone_company_login_details {
+  claim_code String [unique, not null]
+  login_id String [not null]
+  carrier_type_code Int [not null]
+}
+
+Table data_charges {
+  id Int [pk, increment]
+  capacity Float [not null]
+  price Int [not null]
+  available_count Int [not null]
+  data_charge_histories data_charge_histories [not null]
+}
+
+Table data_charge_histories {
+  id Int [pk, increment]
+  profile_id Int [not null]
+  data_charge_id Int [not null]
+  created_at DateTime
+  updated_at DateTime
+  data_charges data_charges [not null]
+  profiles profiles [not null]
+}
+
+Table data_traffics {
+  phone_number String [not null]
+  date DateTime [not null]
+  amount Float [not null]
+  carrier_type_code Int [not null]
+  created_at DateTime [default: `now()`, not null]
+  id Int [pk, increment]
+
+  indexes {
+    (phone_number, date) [unique]
+  }
+}
+
+Table data_traffic_charges {
+  phone_number String [not null]
+  date DateTime [not null]
+  amount Float [not null]
+  carrier_type_code Int [not null]
+  created_at DateTime [default: `now()`, not null]
+  id Int [pk, increment]
+
+  indexes {
+    (phone_number, date) [unique]
+  }
+}
+
+Table international_call_charges {
+  phone_number String [not null]
+  date DateTime [not null]
+  amount Float [not null]
+  carrier_type_code Int [not null]
+  created_at DateTime [default: `now()`, not null]
+  id Int [pk, increment]
+
+  indexes {
+    (phone_number, date) [unique]
+  }
+}
+
+Table profiles {
+  id Int [pk]
+  name String [not null]
+  name_kana String [not null]
+  birthday DateTime [not null]
+  contact_phone_number String [not null]
+  cell_phone_number String [not null]
+  email String [unique, not null]
+  created_at DateTime
+  updated_at DateTime
+  data_charge_histories data_charge_histories [not null]
+  sims sims [not null]
+}
+
+Table failed_jobs {
+  id Int [pk, increment]
+  uuid String [unique, not null]
+  connection String [not null]
+  queue String [not null]
+  payload String [not null]
+  exception String [not null]
+  failed_at DateTime [default: `now()`, not null]
+}
+
+Table gtn_id_tokens {
+  id Int [pk, increment]
+  token String [not null]
+  expired_at DateTime [not null]
+}
+
+Table migrations {
+  id Int [pk, increment]
+  migration String [not null]
+  batch Int [not null]
+}
+
+Table plan_groups {
+  id Int [pk]
+  deadline_day String
+  deadline_time String
+  plans plans [not null]
+}
+
+Table plans {
+  id String [pk]
+  name String [not null]
+  happiness_name String [not null]
+  plan_group_id Int [not null]
+  capacity Float
+  carrier_type_code Int [not null, default: 99]
+  price Int
+  plan_groups plan_groups [not null]
+}
+
+Table sims {
+  id Int [pk, increment]
+  sim_number String [not null]
+  happiness_id String [unique, not null]
+  canceled_at DateTime
+  profile_id Int [not null]
+  created_at DateTime [default: `now()`]
+  updated_at DateTime [default: `now()`]
+  profiles profiles [not null]
+}
+
+Table user_identification_admin_tokens {
+  id Int [pk, increment]
+  token String [not null]
+  expired_at DateTime [not null]
+}
+
+Table videos {
+  id Int [pk, increment]
+  video_id String [not null]
+  thumb String [not null]
+  en_title String [not null]
+  id_title String [not null]
+  ja_title String [not null]
+  ko_title String [not null]
+  ne_title String [not null]
+  vi_title String [not null]
+  zh_Hans_title String [not null]
+  zh_Hant_title String [not null]
+}
+
+Table users {
+  id Int [pk, increment]
+  name String [not null]
+  email String [unique, not null]
+  email_verified_at DateTime
+  password String [not null]
+  remember_token String
+  created_at DateTime [default: `now()`]
+  updated_at DateTime [default: `now()`]
+}
+
+Ref: data_charge_histories.data_charge_id > data_charges.id [delete: Cascade]
+
+Ref: data_charge_histories.profile_id > profiles.id [delete: Cascade]
+
+Ref: plans.plan_group_id > plan_groups.id [delete: Cascade]
+
+Ref: sims.profile_id > profiles.id [delete: Cascade]

@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Get,
-  HttpStatus,
-  Param,
-  ParseIntPipe,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { UserResponseDto } from 'src/user/dto/responses/user.dto';
 
@@ -14,13 +7,22 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   /**
+   * Get user info.
+   * @returns {UserResponseDto}
+   */
+  @Get('/profile_info')
+  async getProfile() {
+    const id = '1';
+    return await this.userService.getProfile(id);
+  }
+
+  /**
    * Get many users.
    * @returns {UserResponseDto[]}
    */
   @Get('/all')
   async find(): Promise<UserResponseDto[]> {
     const users = await this.userService.find();
-    console.log(users, 'users');
     return users;
   }
 
@@ -33,7 +35,6 @@ export class UserController {
   async findByEmailAddress(
     @Query() query: { email: string },
   ): Promise<UserResponseDto[]> {
-    console.log(query.email, 'email');
     return await this.userService.findByEmailAddress(query.email);
   }
 }

@@ -6,9 +6,16 @@ import { AppService } from './app.service';
 import { PassportModule } from '@nestjs/passport';
 import { NestCrawlerModule } from 'nest-crawler';
 import { UserModule } from './user/user.module';
+import { ProfileModule } from './profile/profile.module';
 
 @Module({
-  imports: [PrismaModule, PassportModule, NestCrawlerModule, UserModule],
+  imports: [
+    PrismaModule,
+    PassportModule,
+    NestCrawlerModule,
+    UserModule,
+    ProfileModule,
+  ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
   exports: [],

@@ -7,6 +7,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
+
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model addresses {
   postal_code String    @db.VarChar(255)
@@ -26,7 +30,7 @@ model call_charges {
   amount            Float
   carrier_type_code Int
   created_at        DateTime @default(now()) @db.Timestamp(0)
-  id                Int   @id @default(autoincrement()) @db.UnsignedInt
+  id                Int      @id @default(autoincrement()) @db.UnsignedInt
 
   @@unique([phone_number, date], map: "call_charges_phone_number_date_unique")
 }

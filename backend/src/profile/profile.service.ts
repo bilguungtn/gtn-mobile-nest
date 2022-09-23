@@ -3,14 +3,15 @@ import { PrismaService } from 'prisma/prisma.service';
 import { UserResponseDto } from 'src/user/dto/responses/user.dto';
 
 @Injectable()
-export class UserService {
+export class ProfileService {
   constructor(private prismaService: PrismaService) {}
 
-  public async getProfile(id: string): Promise<UserResponseDto> {
-    const data = this.prismaService.users.findFirst({
-      where: { id: +id },
-    });
-    return data;
+  public async importUser(): Promise<string> {
+    // const data = this.prismaService.users.findFirst({
+    //   where: { id: +id },
+    // });
+    // return data;
+    return '';
   }
 
   // users
