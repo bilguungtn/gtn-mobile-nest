@@ -13,7 +13,7 @@ export class UserController {
   @Get('/profile_info')
   async getProfile() {
     const id = '1';
-    return await this.userService.getProfile(id);
+    return await this.userService.getUser(id);
   }
 
   /**
