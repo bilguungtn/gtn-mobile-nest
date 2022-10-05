@@ -8,3 +8,17 @@ export class LoginRequestDto {
   @IsNotEmpty()
   readonly password: string;
 }
+
+export class CreateUserRequestDto {
+  @IsNotEmpty()
+  @IsString()
+  name: string;
+
+  @IsNotEmpty()
+  @IsString()
+  email: string;
+
+  @IsNotEmpty()
+  @IsString()
+  password: string;
+}

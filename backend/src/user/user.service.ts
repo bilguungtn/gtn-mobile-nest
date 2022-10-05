@@ -3,10 +3,11 @@ import { PrismaService } from 'prisma/prisma.service';
 import { UnauthorizedUserException } from 'src/common/exceptions/unauthorized.exception';
 import { comparePasswords } from 'src/common/helpers/compare-password.helper';
 import { UserResponseDto } from 'src/user/dto/responses/user.dto';
-import { LoginRequestDto } from './dto/requests/user.dto';
+import { CreateUserRequestDto, LoginRequestDto } from './dto/requests/user.dto';
 import { UserAlreadyExistsException } from './exceptions/already-exists.exception';
 import * as bcrypt from 'bcrypt';
 import { CommonException } from 'src/common/exceptions/common.exception';
+import { SuccessResponseDto } from 'src/common/responses/success-response.dto';
 
 @Injectable()
 export class UserService {
@@ -50,9 +51,10 @@ export class UserService {
    * @param {string} param0 email address @param {string} param1 password ==> {LoginRequestDto}
    * @returns
    */
-  async register(createUserRequestDto: any): Promise<any> {
+  async register(
+    createUserRequestDto: CreateUserRequestDto,
+  ): Promise<SuccessResponseDto> {
     try {
-      console.log(createUserRequestDto, 'createUserRequestDto');
       const inDB = await this.prismaService.users.findFirst({
         where: { email: createUserRequestDto.email },
       });
