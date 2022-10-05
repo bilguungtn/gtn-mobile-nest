@@ -22,7 +22,6 @@ export class UserService {
     const data = this.prismaService.users.findFirst({
       where: { email },
     });
-    console.log(data, 'data??');
     return data;
   }
 
@@ -31,7 +30,7 @@ export class UserService {
    * @param {string} param0 email address @param {string} param1 password ==> {LoginRequestDto}
    * @returns
    */
-  async login({ email, password }: LoginRequestDto): Promise<any> {
+  async login({ email, password }: LoginRequestDto): Promise<UserResponseDto> {
     const user = await this.prismaService.users.findFirst({
       where: { email },
     });
@@ -43,7 +42,13 @@ export class UserService {
     if (!areEqual) {
       throw new UnauthorizedUserException();
     }
-    return user;
+    const _user: UserResponseDto = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      created_at: user.created_at,
+    };
+    return _user;
   }
 
   /**

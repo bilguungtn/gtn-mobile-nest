@@ -1,0 +1,3 @@
+user_record_id,user_id,sim_number,e_mail,user_name,user_name_kana,zip_code,prefectures,address_1,address_2,address_3,address_4,address_5,phone,mobile_phone,billing_id,service_id,service_type,plan,plan_status,signin_dt,cancel_dt,use_start_dt,use_end_dt,charge_start_dt,charge_end_dt
+1,121,asdf,bilguun@gmakiflads.com,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+2,21312412,afsdfa,s,sdfsdaf,fasdf,asdf,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL

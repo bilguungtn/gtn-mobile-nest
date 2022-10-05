@@ -2,6 +2,18 @@
 //// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 //// ------------------------------------------------------
 
+Table addresses {
+  id Int [pk, increment]
+  postal_code String [not null]
+  address String [not null]
+  profile_id Int [not null]
+  created_at DateTime
+  updated_at DateTime
+  profiles profiles [not null]
+
+  Note: 'The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.'
+}
+
 Table call_charges {
   phone_number String [not null]
   date DateTime [not null]
@@ -79,7 +91,7 @@ Table international_call_charges {
 }
 
 Table profiles {
-  id Int [pk]
+  id Int [pk, increment]
   name String [not null]
   name_kana String [not null]
   birthday DateTime [not null]
@@ -88,8 +100,20 @@ Table profiles {
   email String [unique, not null]
   created_at DateTime
   updated_at DateTime
+  addresses addresses [not null]
   data_charge_histories data_charge_histories [not null]
   sims sims [not null]
+  visas visas [not null]
+}
+
+Table data_charges_plan_groups {
+  id Int [pk, increment]
+  data_charge_id Int [not null]
+  plan_group_id Int [not null]
+  data_charges data_charges [not null]
+  plan_groups plan_groups [not null]
+
+  Note: 'The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.'
 }
 
 Table failed_jobs {
@@ -163,6 +187,18 @@ Table videos {
   zh_Hant_title String [not null]
 }
 
+Table visas {
+  id Int [pk, increment]
+  classification_code Int [not null, default: 999]
+  period_of_validity_date DateTime
+  profile_id Int [not null]
+  created_at DateTime [default: `now()`]
+  updated_at DateTime [default: `now()`]
+  profiles profiles [not null]
+
+  Note: 'The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.'
+}
+
 Table users {
   id Int [pk, increment]
   name String [not null]
@@ -174,10 +210,18 @@ Table users {
   updated_at DateTime [default: `now()`]
 }
 
+Ref: addresses.profile_id > profiles.id [delete: Cascade]
+
 Ref: data_charge_histories.data_charge_id > data_charges.id [delete: Cascade]
 
 Ref: data_charge_histories.profile_id > profiles.id [delete: Cascade]
 
+Ref: data_charges_plan_groups.data_charge_id - data_charges.id [delete: Cascade]
+
+Ref: data_charges_plan_groups.plan_group_id - plan_groups.id [delete: Cascade]
+
 Ref: plans.plan_group_id > plan_groups.id [delete: Cascade]
 
 Ref: sims.profile_id > profiles.id [delete: Cascade]
+
+Ref: visas.profile_id > profiles.id [delete: Cascade]

@@ -13,15 +13,13 @@ generator dbml {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model addresses {
+  id          Int       @id @default(autoincrement())
   postal_code String    @db.VarChar(255)
   address     String    @db.VarChar(255)
   profile_id  Int       @db.UnsignedInt
   created_at  DateTime? @db.Timestamp(0)
   updated_at  DateTime? @updatedAt @db.Timestamp(0)
-  profiles    profiles  @relation(fields: [profile_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "addresses_profile_id_foreign")
-
-  @@index([profile_id], map: "addresses_profile_id_foreign")
-  @@ignore
+  profiles    profiles  @relation(fields: [profile_id], references: [id], onDelete: Cascade)
 }
 
 model call_charges {
@@ -97,7 +95,7 @@ model international_call_charges {
 }
 
 model profiles {
-  id                    Int                     @id @db.UnsignedInt
+  id                    Int                     @id @default(autoincrement()) @db.UnsignedInt
   name                  String                  @db.VarChar(255)
   name_kana             String                  @db.VarChar(255)
   birthday              DateTime                @db.Date
@@ -106,22 +104,19 @@ model profiles {
   email                 String                  @unique(map: "profiles_email_unique") @db.VarChar(255)
   created_at            DateTime?               @db.Timestamp(0)
   updated_at            DateTime?               @updatedAt @db.Timestamp(0)
-  addresses             addresses[]             @ignore
+  addresses             addresses[]
   data_charge_histories data_charge_histories[]
   sims                  sims[]
-  visas                 visas[]                 @ignore
+  visas                 visas[]
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model data_charges_plan_groups {
+  id             Int          @id @default(autoincrement())
   data_charge_id Int          @db.UnsignedInt
   plan_group_id  Int          @db.UnsignedInt
-  data_charges   data_charges @relation(fields: [data_charge_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "data_charges_plan_groups_data_charge_id_foreign")
-  plan_groups    plan_groups  @relation(fields: [plan_group_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "data_charges_plan_groups_plan_group_id_foreign")
-
-  @@index([data_charge_id], map: "data_charges_plan_groups_data_charge_id_foreign")
-  @@index([plan_group_id], map: "data_charges_plan_groups_plan_group_id_foreign")
-  @@ignore
+  data_charges   data_charges @relation(fields: [data_charge_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  plan_groups    plan_groups  @relation(fields: [plan_group_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model failed_jobs {
@@ -226,15 +221,13 @@ model videos {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model visas {
+  id                      Int       @id @default(autoincrement())
   classification_code     Int       @default(999)
   period_of_validity_date DateTime? @db.Date
   profile_id              Int       @db.UnsignedInt
   created_at              DateTime? @default(now()) @db.Timestamp(0)
   updated_at              DateTime? @default(now()) @updatedAt @db.Timestamp(0)
   profiles                profiles  @relation(fields: [profile_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "visas_profile_id_foreign")
-
-  @@index([profile_id], map: "visas_profile_id_foreign")
-  @@ignore
 }
 
 model users {

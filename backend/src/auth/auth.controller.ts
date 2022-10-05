@@ -31,7 +31,7 @@ export class AuthController {
    * @param {RegisterUserRequestDto} createUserRequest New user data
    * @returns {SuccessResponseDto}
    */
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(BasicAuthGuard)
   @Post('/register')
   public async register(
     @Body() createUserRequest: CreateUserRequestDto,
