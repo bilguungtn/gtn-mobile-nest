@@ -1,9 +1,13 @@
 import {
+  Body,
   Controller,
   Get,
+  HttpStatus,
+  Param,
+  ParseIntPipe,
   Post,
+  Put,
   Query,
-  Res,
   UseInterceptors,
 } from '@nestjs/common';
 import { ProfileService } from 'src/profile/profile.service';
@@ -24,12 +28,29 @@ export class ProfileController {
   }
 
   /**
-   * Get import user.
+   * Get profile by gtnId.
+   * @param {string} id
    * @returns {any}
    */
-  @Get('/profile_user')
-  async getProfile() {
-    return await this.profileService.getProfile();
+  @Get('/profile_info/:id')
+  async getProfile(
+    @Param(
+      'id',
+      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    id: number,
+  ) {
+    return await this.profileService.getProfile(id);
+  }
+
+  /**
+   * Update.
+   * @param {UpdateUserProfileRequest} data
+   * @returns {any}
+   */
+  @Put('/profile_info')
+  async updateProfile(@Body() data: any) {
+    return await this.profileService.updateProfile(data);
   }
 
   /**
@@ -50,10 +71,11 @@ export class ProfileController {
 
   /**
    * create profile.
+   * @param {data}
    * @returns {any}
    */
   @Post('/create')
-  async createProfile() {
-    return await this.profileService.createProfile();
+  async createProfile(@Body() data: any) {
+    return await this.profileService.createProfile(data);
   }
 }
