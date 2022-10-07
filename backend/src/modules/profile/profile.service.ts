@@ -2,11 +2,13 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { readFileSync } from 'fs';
 import { parse } from 'papaparse';
 import { PrismaService } from 'prisma/prisma.service';
-import { UserResponseDto } from 'src/user/dto/responses/user.dto';
+import { UserResponseDto } from 'src/modules/user/dto/responses/user.dto';
 
 @Injectable()
 export class ProfileService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService, // private profileService: ProfileService,
+  ) {}
 
   public async getProfile(id: any): Promise<any> {
     const profile = await this.prismaService.profiles.findFirst({
@@ -20,6 +22,15 @@ export class ProfileService {
   }
 
   public async updateProfile(data: any): Promise<any> {
+    const emailAddress = data.email;
+
+    if (!emailAddress) {
+      return;
+      //'finding gtn-id from gtn-id system...'
+      // find by email
+      // 'response came.'
+    }
+
     return '';
   }
 

@@ -5,9 +5,9 @@ import { AuthService } from './auth.service';
 import {
   CreateUserRequestDto,
   LoginRequestDto,
-} from 'src/user/dto/requests/user.dto';
+} from 'src/modules/user/dto/requests/user.dto';
 import { SuccessResponseDto } from 'src/common/responses/success-response.dto';
-import { LoginResponseDto } from 'src/auth/dto/response/loginResponse.dto';
+import { LoginResponseDto } from 'src/modules/auth/dto/response/loginResponse.dto';
 
 @Controller('auth')
 export class AuthController {

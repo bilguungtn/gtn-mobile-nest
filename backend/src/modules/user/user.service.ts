@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { UnauthorizedUserException } from 'src/common/exceptions/unauthorized.exception';
 import { comparePasswords } from 'src/common/helpers/compare-password.helper';
-import { UserResponseDto } from 'src/user/dto/responses/user.dto';
+import { UserResponseDto } from 'src/modules/user/dto/responses/user.dto';
 import { CreateUserRequestDto, LoginRequestDto } from './dto/requests/user.dto';
 import { UserAlreadyExistsException } from './exceptions/already-exists.exception';
 import * as bcrypt from 'bcrypt';

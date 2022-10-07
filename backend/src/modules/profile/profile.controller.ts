@@ -7,10 +7,9 @@ import {
   ParseIntPipe,
   Post,
   Put,
-  Query,
   UseInterceptors,
 } from '@nestjs/common';
-import { ProfileService } from 'src/profile/profile.service';
+import { ProfileService } from 'src/modules/profile/profile.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 
@@ -18,17 +17,17 @@ import { diskStorage } from 'multer';
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
-  /**
-   * Get import user.
-   * @returns {any}
-   */
-  @Get('/importUser')
-  async importUser() {
-    return await this.profileService.importUser();
-  }
+  // /**
+  //  * Get import user.
+  //  * @returns {any}
+  //  */
+  // @Get('/importUser')
+  // async importUser() {
+  //   return await this.profileService.importUser();
+  // }
 
   /**
-   * Get profile by gtnId.
+   * Get profile by id.
    * @param {string} id
    * @returns {any}
    */
@@ -44,7 +43,7 @@ export class ProfileController {
   }
 
   /**
-   * Update.
+   * Update profile.
    * @param {UpdateUserProfileRequest} data
    * @returns {any}
    */
