@@ -1,8 +1,16 @@
-import { HttpException, Injectable } from '@nestjs/common';
-import { readFileSync } from 'fs';
 import { parse } from 'papaparse';
+import { readFileSync } from 'fs';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
+import { toProfileResponseDto } from 'src/common/helpers/dto-mapper.helper';
+import { SuccessResponseDto } from 'src/common/responses/success-response.dto';
 import { UserResponseDto } from 'src/modules/user/dto/responses/user.dto';
+import { ProfileDto } from 'src/modules/profile/dto/response/profile.dto';
 
 @Injectable()
 export class ProfileService {
@@ -10,36 +18,89 @@ export class ProfileService {
     private prismaService: PrismaService, // private profileService: ProfileService,
   ) {}
 
-  public async getProfile(id: any): Promise<any> {
+  public async getProfile(id: any): Promise<ProfileDto> {
     const profile = await this.prismaService.profiles.findFirst({
       where: { id: +id },
       include: {
         addresses: true,
         sims: true,
+        visas: true,
       },
     });
-    return profile;
+    return toProfileResponseDto(profile);
   }
 
-  public async updateProfile(data: any): Promise<any> {
-    const emailAddress = data.email;
+  public async updateProfile(
+    data: ProfileDto,
+    id: number,
+  ): Promise<SuccessResponseDto> {
+    try {
+      const where = { id };
+      const existing_profile = await this.prismaService.profiles.findUnique({
+        where,
+      });
+      if (!existing_profile) {
+        throw new NotFoundException();
+      }
+      const profile_updated = await this.prismaService.profiles.update({
+        where,
+        data: {
+          name: data.name,
+          name_kana: data.name_kana,
+          birthday: data.birthdate,
+          contact_phone_number: data.contact_phone_number,
+          cell_phone_number: data.cell_phone_number,
+          sims: {
+            updateMany: {
+              where: {
+                profile_id: id,
+              },
+              data: {
+                sim_number: data.contact_phone_number,
+              },
+            },
+          },
+          addresses: {
+            updateMany: {
+              where: {
+                profile_id: id,
+              },
+              data: {
+                postal_code: data.postal_code,
+                address: data.address,
+              },
+            },
+          },
+          visas: {
+            updateMany: {
+              where: { profile_id: id },
+              data: {
+                classification_code: data.visa_classification_code,
+                period_of_validity_date: data.visa_period_of_validity_date,
+              },
+            },
+          },
+        },
+      });
 
-    if (!emailAddress) {
-      return;
-      //'finding gtn-id from gtn-id system...'
-      // find by email
-      // 'response came.'
+      if (!profile_updated) throw new NotFoundException();
+      const res: any = {
+        statusCode: 201,
+        message: 'Updated profile data.',
+      };
+      return res;
+    } catch (error) {
+      throw new Error(error);
     }
-
-    return '';
   }
 
-  public async getProfileWithSim(id: any, simNumber): Promise<any> {
+  public async getProfileWithSim(id: string, simNumber: string): Promise<any> {
     const profile = await this.prismaService.profiles.findFirst({
       where: { id: +id },
       include: {
         addresses: true,
         sims: true,
+        visas: true,
       },
     });
     return profile;
@@ -65,7 +126,8 @@ export class ProfileService {
     const profile = await this.prismaService.profiles.create({
       data,
     });
-    if (!profile) throw new HttpException('already created', 500);
+    if (!profile)
+      throw new HttpException(`bad request`, HttpStatus.BAD_REQUEST);
 
     const res: any = {
       statusCode: 201,
@@ -77,8 +139,6 @@ export class ProfileService {
   //csv
   public async salesForceCustumorImporter(): Promise<any> {
     const csvFile = readFileSync('files/import_test.csv');
-    // const csvFile = readFileSync('files/Untitled.csv');
-
     const csvData = csvFile.toString();
     const parsedCsv = await parse(csvData, {
       // header: true,

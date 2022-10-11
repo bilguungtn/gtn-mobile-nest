@@ -12,6 +12,7 @@ import {
 import { ProfileService } from 'src/modules/profile/profile.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import { SuccessResponseDto } from 'src/common/responses/success-response.dto';
 
 @Controller('profile')
 export class ProfileController {
@@ -45,11 +46,18 @@ export class ProfileController {
   /**
    * Update profile.
    * @param {UpdateUserProfileRequest} data
-   * @returns {any}
+   * @returns {SuccessResponseDto}
    */
-  @Put('/profile_info')
-  async updateProfile(@Body() data: any) {
-    return await this.profileService.updateProfile(data);
+  @Put('/profile_info/:id')
+  async updateProfile(
+    @Body() data: any,
+    @Param(
+      'id',
+      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    id: number,
+  ) {
+    return await this.profileService.updateProfile(data, id);
   }
 
   /**

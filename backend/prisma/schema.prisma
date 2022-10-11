@@ -102,7 +102,7 @@ model profiles {
   contact_phone_number  String                  @db.VarChar(255)
   cell_phone_number     String                  @db.VarChar(255)
   email                 String                  @unique(map: "profiles_email_unique") @db.VarChar(255)
-  created_at            DateTime?               @db.Timestamp(0)
+  created_at            DateTime?               @default(now()) @db.Timestamp(0)
   updated_at            DateTime?               @updatedAt @db.Timestamp(0)
   addresses             addresses[]
   data_charge_histories data_charge_histories[]

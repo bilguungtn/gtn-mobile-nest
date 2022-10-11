@@ -98,7 +98,7 @@ Table profiles {
   contact_phone_number String [not null]
   cell_phone_number String [not null]
   email String [unique, not null]
-  created_at DateTime
+  created_at DateTime [default: `now()`]
   updated_at DateTime
   addresses addresses [not null]
   data_charge_histories data_charge_histories [not null]
