@@ -18,9 +18,9 @@ export class UserService {
    * @param {string} param0 email address @param {string} param1 password ==> {LoginRequestDto}
    * @returns
    */
-  async getUser(email: string): Promise<any> {
+  async getUser(id: any): Promise<any> {
     const data = this.prismaService.users.findFirst({
-      where: { email },
+      where: { id: +id },
     });
     return data;
   }

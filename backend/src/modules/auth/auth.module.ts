@@ -9,6 +9,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { UserModule } from '../user/user.module';
 import { UserService } from 'src/modules/user/user.service';
 import { BasicStrategy } from './strategies/basic-auth.strategy';
+import { ProfileService } from '../profile/profile.service';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { BasicStrategy } from './strategies/basic-auth.strategy';
     BasicStrategy,
     JwtStrategy,
     UserService,
+    ProfileService,
   ],
   exports: [AuthService],
 })

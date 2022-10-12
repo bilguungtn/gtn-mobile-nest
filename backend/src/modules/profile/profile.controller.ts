@@ -7,12 +7,16 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Req,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ProfileService } from 'src/modules/profile/profile.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { SuccessResponseDto } from 'src/common/responses/success-response.dto';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { IRequestWithUser } from 'src/common/interfaces/request_with_user.interface';
 
 @Controller('profile')
 export class ProfileController {
@@ -29,18 +33,14 @@ export class ProfileController {
 
   /**
    * Get profile by id.
-   * @param {string} id
+   * @param {any} req
    * @returns {any}
    */
-  @Get('/profile_info/:id')
-  async getProfile(
-    @Param(
-      'id',
-      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
-    )
-    id: number,
-  ) {
-    return await this.profileService.getProfile(id);
+  @UseGuards(JwtAuthGuard)
+  @Get('/profile_info')
+  async getProfile(@Req() req: IRequestWithUser) {
+    const { user } = req;
+    return await this.profileService.getProfile(user.gtn_id);
   }
 
   /**
@@ -48,16 +48,25 @@ export class ProfileController {
    * @param {UpdateUserProfileRequest} data
    * @returns {SuccessResponseDto}
    */
-  @Put('/profile_info/:id')
-  async updateProfile(
-    @Body() data: any,
-    @Param(
-      'id',
-      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
-    )
-    id: number,
-  ) {
-    return await this.profileService.updateProfile(data, id);
+  @UseGuards(JwtAuthGuard)
+  @Put('/profile_info')
+  async updateProfile(@Body() data: any, @Req() req: any) {
+    const { user } = req;
+    return await this.profileService.updateProfile(data, user.id);
+  }
+
+  /**
+   * Update profile.
+   * @param {UpdateUserProfileRequest} data
+   * @returns {SuccessResponseDto}
+   */
+  @UseGuards(JwtAuthGuard)
+  @Put('/login_info')
+  async changeEmail(@Body() data: any, @Req() req: any) {
+    console.log(data, 'data');
+    const { user } = req;
+    // if (!data.email) throw new Error('fuck');
+    return await this.profileService.changeEmail(user.gtn_id, data.email);
   }
 
   /**

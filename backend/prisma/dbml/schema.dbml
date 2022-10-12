@@ -104,6 +104,7 @@ Table profiles {
   data_charge_histories data_charge_histories [not null]
   sims sims [not null]
   visas visas [not null]
+  user users
 }
 
 Table data_charges_plan_groups {
@@ -208,6 +209,7 @@ Table users {
   remember_token String
   created_at DateTime [default: `now()`]
   updated_at DateTime [default: `now()`]
+  profiles profiles [not null]
 }
 
 Ref: addresses.profile_id > profiles.id [delete: Cascade]
@@ -225,3 +227,5 @@ Ref: plans.plan_group_id > plan_groups.id [delete: Cascade]
 Ref: sims.profile_id > profiles.id [delete: Cascade]
 
 Ref: visas.profile_id > profiles.id [delete: Cascade]
+
+Ref: users.email - profiles.email

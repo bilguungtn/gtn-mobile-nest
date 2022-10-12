@@ -94,6 +94,25 @@ export class ProfileService {
     }
   }
 
+  public async changeEmail(id: number, email: string) {
+    try {
+      const change = await this.prismaService.profiles.update({
+        where: { id },
+        data: {
+          email,
+        },
+      });
+      console.log(change);
+      const res: any = {
+        statusCode: 201,
+        message: 'Created user data.',
+      };
+      return res;
+    } catch (error) {
+      throw new Error('error');
+    }
+  }
+
   public async getProfileWithSim(id: string, simNumber: string): Promise<any> {
     const profile = await this.prismaService.profiles.findFirst({
       where: { id: +id },
@@ -111,18 +130,23 @@ export class ProfileService {
   }
 
   // profile find
-  public async findByEmailAddress(email: string): Promise<UserResponseDto[]> {
+  public async findByEmailAddress(email: string): Promise<ProfileDto> {
     try {
-      const data = this.prismaService.users.findMany({
+      const data = await this.prismaService.profiles.findFirst({
         where: { email },
+        include: {
+          sims: true,
+          addresses: true,
+          visas: true,
+        },
       });
-      return data;
+      return toProfileResponseDto(data);
     } catch (error) {
       console.log(error);
     }
   }
 
-  public async createProfile(data: any): Promise<any> {
+  public async createProfile(data: any): Promise<SuccessResponseDto> {
     const profile = await this.prismaService.profiles.create({
       data,
     });
