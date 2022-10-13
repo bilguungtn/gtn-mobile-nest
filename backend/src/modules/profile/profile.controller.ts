@@ -5,6 +5,7 @@ import {
   HttpStatus,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Put,
   Req,
@@ -49,10 +50,10 @@ export class ProfileController {
    * @returns {SuccessResponseDto}
    */
   @UseGuards(JwtAuthGuard)
-  @Put('/profile_info')
+  @Patch('/profile_info')
   async updateProfile(@Body() data: any, @Req() req: any) {
     const { user } = req;
-    return await this.profileService.updateProfile(data, user.id);
+    return await this.profileService.updateProfile(data, user.gtn_id);
   }
 
   /**
@@ -61,11 +62,9 @@ export class ProfileController {
    * @returns {SuccessResponseDto}
    */
   @UseGuards(JwtAuthGuard)
-  @Put('/login_info')
+  @Patch('/login_info')
   async changeEmail(@Body() data: any, @Req() req: any) {
-    console.log(data, 'data');
     const { user } = req;
-    // if (!data.email) throw new Error('fuck');
     return await this.profileService.changeEmail(user.gtn_id, data.email);
   }
 

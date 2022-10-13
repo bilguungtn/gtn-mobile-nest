@@ -140,14 +140,14 @@ Table migrations {
 }
 
 Table plan_groups {
-  id Int [pk]
+  id Int [pk, increment]
   deadline_day String
   deadline_time String
   plans plans [not null]
 }
 
 Table plans {
-  id String [pk]
+  id Int [pk, increment]
   name String [not null]
   happiness_name String [not null]
   plan_group_id Int [not null]
@@ -209,7 +209,7 @@ Table users {
   remember_token String
   created_at DateTime [default: `now()`]
   updated_at DateTime [default: `now()`]
-  profiles profiles [not null]
+  profiles profiles
 }
 
 Ref: addresses.profile_id > profiles.id [delete: Cascade]

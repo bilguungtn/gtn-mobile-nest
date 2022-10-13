@@ -50,6 +50,30 @@ async function user_seeder() {
       },
     });
     console.log('Success => User seeder.');
+
+    await client.plan_groups.create({
+      data: {
+        deadline_day: '20221010',
+        deadline_time: '1212',
+        plans: {
+          createMany: {
+            data: [
+              {
+                name: 'plan1',
+                happiness_name: 'happiness_name1',
+                capacity: 1.1,
+                price: 117,
+              },
+              {
+                name: 'plan2',
+                happiness_name: 'happiness_name2',
+                price: 112317,
+              },
+            ],
+          },
+        },
+      },
+    });
   } catch (error) {
     console.log('Error => User seeder : ', error);
   }

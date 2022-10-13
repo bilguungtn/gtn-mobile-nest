@@ -153,7 +153,7 @@ model password_resets {
 }
 
 model plan_groups {
-  id                                                                                      Int                        @id @db.UnsignedInt
+  id                                                                                      Int                        @id @default(autoincrement()) @db.UnsignedInt
   deadline_day                                                                            String?                    @db.VarChar(255)
   deadline_time                                                                           String?                    @db.VarChar(255)
   data_charges_plan_groups                                                                data_charges_plan_groups[] @ignore
@@ -175,7 +175,7 @@ model plan_groups_relations {
 }
 
 model plans {
-  id                String      @id @db.VarChar(255)
+  id                Int         @id @default(autoincrement())
   name              String      @db.VarChar(255)
   happiness_name    String      @db.VarChar(255)
   plan_group_id     Int         @db.UnsignedInt
@@ -240,5 +240,5 @@ model users {
   remember_token    String?   @db.VarChar(100)
   created_at        DateTime? @default(now()) @db.Timestamp(0)
   updated_at        DateTime? @default(now()) @updatedAt @db.Timestamp(0)
-  profiles          profiles?  @relation(fields: [email], references: [email])
+  profiles          profiles? @relation(fields: [email], references: [email])
 }
