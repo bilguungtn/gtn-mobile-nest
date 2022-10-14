@@ -16,6 +16,7 @@ import { UserModule } from 'src/modules/user/user.module';
 import { ProfileModule } from 'src/modules/profile/profile.module';
 import { AuthModule } from 'src/modules/auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
+import { PlanModule } from 'src/modules/plan/plan.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { APP_GUARD } from '@nestjs/core';
     NestCrawlerModule,
     UserModule,
     ProfileModule,
+    PlanModule,
     ConfigModule.forRoot({
       envFilePath: `${process.cwd()}/.env`,
       load: [configuration],

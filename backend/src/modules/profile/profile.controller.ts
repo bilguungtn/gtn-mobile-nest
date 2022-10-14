@@ -19,18 +19,9 @@ import { SuccessResponseDto } from 'src/common/responses/success-response.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { IRequestWithUser } from 'src/common/interfaces/request_with_user.interface';
 
-@Controller('profile')
+@Controller()
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
-
-  // /**
-  //  * Get import user.
-  //  * @returns {any}
-  //  */
-  // @Get('/importUser')
-  // async importUser() {
-  //   return await this.profileService.importUser();
-  // }
 
   /**
    * Get profile by id.
@@ -84,13 +75,13 @@ export class ProfileController {
     return await this.profileService.salesForceCustumorImporter();
   }
 
-  /**
-   * create profile.
-   * @param {data}
-   * @returns {any}
-   */
-  @Post('/create')
-  async createProfile(@Body() data: any) {
-    return await this.profileService.createProfile(data);
-  }
+  // /**
+  //  * create profile.
+  //  * @param {data}
+  //  * @returns {any}
+  //  */
+  // @Post('/create')
+  // async createProfile(@Body() data: any) {
+  //   return await this.profileService.createProfile(data);
+  // }
 }

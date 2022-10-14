@@ -9,7 +9,7 @@ import {
 import { SuccessResponseDto } from 'src/common/responses/success-response.dto';
 import { LoginResponseDto } from 'src/modules/auth/dto/response/loginResponse.dto';
 
-@Controller('auth')
+@Controller()
 export class AuthController {
   constructor(private authService: AuthService) {}
 
