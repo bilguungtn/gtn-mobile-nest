@@ -96,13 +96,12 @@ export class ProfileService {
 
   public async changeEmail(id: number, email: string) {
     try {
-      const change = await this.prismaService.profiles.update({
+      await this.prismaService.profiles.update({
         where: { id },
         data: {
           email,
         },
       });
-      console.log(change);
       const res: any = {
         statusCode: 201,
         message: 'Created user data.',

@@ -143,7 +143,22 @@ Table plan_groups {
   id Int [pk, increment]
   deadline_day String
   deadline_time String
+  available_change_plan Boolean [not null, default: false]
+  current_plan Boolean [not null, default: false]
+  data_charges_plan_groups data_charges_plan_groups [not null]
+  plan_groups_relations_plan_groupsToplan_groups_relations_available_change_plan_group_id plan_groups_relations [not null]
+  plan_groups_relations_plan_groupsToplan_groups_relations_current_plan_group_id plan_groups_relations [not null]
   plans plans [not null]
+}
+
+Table plan_groups_relations {
+  id Int [pk, increment]
+  current_plan_group_id Int [not null]
+  available_change_plan_group_id Int [not null]
+  plan_groups_plan_groupsToplan_groups_relations_available_change_plan_group_id plan_groups [not null]
+  plan_groups_plan_groupsToplan_groups_relations_current_plan_group_id plan_groups [not null]
+
+  Note: 'The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.'
 }
 
 Table plans {
@@ -220,7 +235,11 @@ Ref: data_charge_histories.profile_id > profiles.id [delete: Cascade]
 
 Ref: data_charges_plan_groups.data_charge_id - data_charges.id [delete: Cascade]
 
-Ref: data_charges_plan_groups.plan_group_id - plan_groups.id [delete: Cascade]
+Ref: data_charges_plan_groups.plan_group_id > plan_groups.id [delete: Cascade]
+
+Ref: plan_groups_relations.available_change_plan_group_id > plan_groups.id [delete: Cascade]
+
+Ref: plan_groups_relations.current_plan_group_id > plan_groups.id [delete: Cascade]
 
 Ref: plans.plan_group_id > plan_groups.id [delete: Cascade]
 

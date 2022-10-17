@@ -42,7 +42,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('/me')
   public async get(@Req() req: any) {
-    console.log(req.user);
     return 'get';
   }
 }

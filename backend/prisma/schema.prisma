@@ -156,22 +156,21 @@ model plan_groups {
   id                                                                                      Int                        @id @default(autoincrement()) @db.UnsignedInt
   deadline_day                                                                            String?                    @db.VarChar(255)
   deadline_time                                                                           String?                    @db.VarChar(255)
-  data_charges_plan_groups                                                                data_charges_plan_groups[] @ignore
-  plan_groups_relations_plan_groupsToplan_groups_relations_available_change_plan_group_id plan_groups_relations[]    @relation("plan_groupsToplan_groups_relations_available_change_plan_group_id") @ignore
-  plan_groups_relations_plan_groupsToplan_groups_relations_current_plan_group_id          plan_groups_relations[]    @relation("plan_groupsToplan_groups_relations_current_plan_group_id") @ignore
+  available_change_plan                                                                   Boolean                    @default(false)
+  current_plan                                                                            Boolean                    @default(false)
+  data_charges_plan_groups                                                                data_charges_plan_groups[]
+  plan_groups_relations_plan_groupsToplan_groups_relations_available_change_plan_group_id plan_groups_relations[]    @relation("plan_groupsToplan_groups_relations_available_change_plan_group_id")
+  plan_groups_relations_plan_groupsToplan_groups_relations_current_plan_group_id          plan_groups_relations[]    @relation("plan_groupsToplan_groups_relations_current_plan_group_id")
   plans                                                                                   plans[]
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model plan_groups_relations {
+  id                                                                            Int         @id @default(autoincrement())
   current_plan_group_id                                                         Int         @db.UnsignedInt
   available_change_plan_group_id                                                Int         @db.UnsignedInt
   plan_groups_plan_groupsToplan_groups_relations_available_change_plan_group_id plan_groups @relation("plan_groupsToplan_groups_relations_available_change_plan_group_id", fields: [available_change_plan_group_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "plan_groups_relations_available_change_plan_group_id_foreign")
   plan_groups_plan_groupsToplan_groups_relations_current_plan_group_id          plan_groups @relation("plan_groupsToplan_groups_relations_current_plan_group_id", fields: [current_plan_group_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "plan_groups_relations_current_plan_group_id_foreign")
-
-  @@index([available_change_plan_group_id], map: "plan_groups_relations_available_change_plan_group_id_foreign")
-  @@index([current_plan_group_id], map: "plan_groups_relations_current_plan_group_id_foreign")
-  @@ignore
 }
 
 model plans {

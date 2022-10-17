@@ -3,7 +3,7 @@ import * as bcrypt from 'bcrypt';
 
 const client = new PrismaClient();
 
-async function user_seeder() {
+async function seeder() {
   try {
     await client.profiles.create({
       data: {
@@ -51,32 +51,10 @@ async function user_seeder() {
     });
     console.log('Success => User seeder.');
 
-    await client.plan_groups.create({
-      data: {
-        deadline_day: '20221010',
-        deadline_time: '1212',
-        plans: {
-          createMany: {
-            data: [
-              {
-                name: 'plan1',
-                happiness_name: 'happiness_name1',
-                capacity: 1.1,
-                price: 117,
-              },
-              {
-                name: 'plan2',
-                happiness_name: 'happiness_name2',
-                price: 112317,
-              },
-            ],
-          },
-        },
-      },
-    });
+    await this.PlanService;
   } catch (error) {
     console.log('Error => User seeder : ', error);
   }
 }
 
-user_seeder();
+seeder();
