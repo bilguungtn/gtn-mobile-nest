@@ -2,12 +2,7 @@ import {
   Body,
   Controller,
   Get,
-  HttpStatus,
-  Param,
-  ParseIntPipe,
   Patch,
-  Post,
-  Put,
   Req,
   UseGuards,
   UseInterceptors,
@@ -42,7 +37,10 @@ export class ProfileController {
    */
   @UseGuards(JwtAuthGuard)
   @Patch('/profile_info')
-  async updateProfile(@Body() data: any, @Req() req: any) {
+  async updateProfile(
+    @Body() data: any,
+    @Req() req: any,
+  ): Promise<SuccessResponseDto> {
     const { user } = req;
     return await this.profileService.updateProfile(data, user.gtn_id);
   }
@@ -54,7 +52,10 @@ export class ProfileController {
    */
   @UseGuards(JwtAuthGuard)
   @Patch('/login_info')
-  async changeEmail(@Body() data: any, @Req() req: any) {
+  async changeEmail(
+    @Body() data: any,
+    @Req() req: any,
+  ): Promise<SuccessResponseDto> {
     const { user } = req;
     return await this.profileService.changeEmail(user.gtn_id, data.email);
   }
@@ -74,14 +75,4 @@ export class ProfileController {
   async salesForceCustumorImporter() {
     return await this.profileService.salesForceCustumorImporter();
   }
-
-  // /**
-  //  * create profile.
-  //  * @param {data}
-  //  * @returns {any}
-  //  */
-  // @Post('/create')
-  // async createProfile(@Body() data: any) {
-  //   return await this.profileService.createProfile(data);
-  // }
 }

@@ -9,7 +9,6 @@ import {
 import { PrismaService } from 'prisma/prisma.service';
 import { toProfileResponseDto } from 'src/common/helpers/dto-mapper.helper';
 import { SuccessResponseDto } from 'src/common/responses/success-response.dto';
-import { UserResponseDto } from 'src/modules/user/dto/responses/user.dto';
 import { ProfileDto } from 'src/modules/profile/dto/response/profile.dto';
 
 @Injectable()

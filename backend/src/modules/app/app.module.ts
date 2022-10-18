@@ -17,6 +17,7 @@ import { ProfileModule } from 'src/modules/profile/profile.module';
 import { AuthModule } from 'src/modules/auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { PlanModule } from 'src/modules/plan/plan.module';
+import { SimsModule } from 'src/sims/sims.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { PlanModule } from 'src/modules/plan/plan.module';
     UserModule,
     ProfileModule,
     PlanModule,
+    SimsModule,
     ConfigModule.forRoot({
       envFilePath: `${process.cwd()}/.env`,
       load: [configuration],
