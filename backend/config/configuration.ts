@@ -10,7 +10,6 @@ export const configuration = () => {
     jwt: {
       secret: process.env.JWT_SECRET,
       expiresIn: +process.env.JWT_EXPIRES_IN,
-      secretKey: '' + process.env.JWT_SECRET_KEY,
     },
     auth: {
       http_basic_username: process.env.HTTP_BASIC_USER,

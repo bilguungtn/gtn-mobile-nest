@@ -37,4 +37,9 @@ export class PlanController {
   async initialPlanImport() {
     return await this.planService.initialPlanImport();
   }
+
+  @Get('/plan_import_price')
+  async planImportPrice() {
+    return await this.planService.planImportPrice();
+  }
 }

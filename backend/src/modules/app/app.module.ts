@@ -17,7 +17,7 @@ import { ProfileModule } from 'src/modules/profile/profile.module';
 import { AuthModule } from 'src/modules/auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { PlanModule } from 'src/modules/plan/plan.module';
-import { SimsModule } from 'src/sims/sims.module';
+import { SimsModule } from 'src/modules/sims/sims.module';
 
 @Module({
   imports: [
