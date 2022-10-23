@@ -42,4 +42,16 @@ export class PlanController {
   async planImportPrice() {
     return await this.planService.planImportPrice();
   }
+
+  /**
+   * Get profile by id.
+   * @param {any} req
+   * @returns {any}
+   */
+  @UseGuards(JwtAuthGuard)
+  @Get('/plan_id')
+  async getMainPlanIdByUserId(@Req() req: IRequestWithUser) {
+    const { user } = req;
+    return await this.planService.getMainPlanIdByUserId(user.gtn_id);
+  }
 }

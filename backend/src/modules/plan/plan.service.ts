@@ -5,6 +5,7 @@ import { readFileSync } from 'fs';
 import { parse } from 'papaparse';
 import { PlanGroupDto } from './dto/response/plan.dto';
 import { toPlanGroupDto } from './dto/dto-mapper.helper';
+import { formatCapacity } from 'src/common/helpers/csv.helper';
 
 @Injectable()
 export class PlanService {
@@ -39,11 +40,31 @@ export class PlanService {
     }
     return deadlines;
   };
+
   public async initialPlanImport(): Promise<any> {
     try {
-      const { data } = await this.planImport();
-
+      const csvFile = readFileSync('files/plan_data.csv');
+      const csvData = csvFile.toString();
+      const csvParse = parse(csvData, {
+        header: true,
+        skipEmptyLines: true,
+        beforeFirstChunk: function (chunk) {
+          const rows = chunk.split(/\r\n|\r|\n/);
+          rows[0] =
+            'item_name, capacity_gb, name, plan_group_id, capacity_mb, price, time_display, happiness_id, happiness_name, charge_plan, carrier_type, deadline_time';
+          return rows.join('\r\n');
+        },
+        transformHeader: (header) =>
+          header.toLowerCase().replace('#', '').trim(),
+        complete: (results) => results.data,
+      });
+      const { data } = csvParse;
       if (!data) throw new HttpException('bad request', 400);
+      // return data;
+      for (const item of data) {
+        this.createDataCharge(item);
+      }
+      await this.prismaService.plan_groups.deleteMany();
 
       for (const item of data) {
         // header name ni csv deeree yapon
@@ -88,6 +109,8 @@ export class PlanService {
           });
         }
       }
+
+      this.planImportPrice();
       const res: any = {
         statusCode: 201,
         message: 'Created user data.',
@@ -132,21 +155,36 @@ export class PlanService {
     return res;
   }
 
-  public async planImport(): Promise<any> {
-    const csvFile = readFileSync('files/plan_data.csv');
-    const csvData = csvFile.toString();
-    const parsedCsv = parse(csvData, {
-      header: true,
-      skipEmptyLines: true,
-      beforeFirstChunk: function (chunk) {
-        const rows = chunk.split(/\r\n|\r|\n/);
-        rows[0] =
-          'item_name, capacity_gb, name, plan_group_id, capacity_mb, price, time_display, happiness_id, happiness_name, charge_plan, carrier_type, deadline_time';
-        return rows.join('\r\n');
-      },
-      transformHeader: (header) => header.toLowerCase().replace('#', '').trim(),
-      complete: (results) => results.data,
-    });
-    return parsedCsv;
+  public async getMainPlanIdByUserId(id: number): Promise<number> {
+    try {
+      const sim = await this.prismaService.sims.findFirst({
+        where: {
+          profile_id: +id,
+        },
+      });
+      if (!sim.happiness_id) throw new HttpException('error', 400);
+      const plan_id = await this.prismaService.plans.findUnique({
+        where: { id: +sim.happiness_id },
+        select: {
+          id: true,
+        },
+      });
+      if (!plan_id) throw new HttpException('plan not found', 400);
+      return plan_id.id;
+    } catch (error) {
+      throw new HttpException(error, 400);
+    }
+  }
+
+  public async createDataCharge(data): Promise<any> {
+    try {
+      const capacityString = data.capacity_mb;
+      if (capacityString === '不可' || capacityString === '') return null;
+      console.log(capacityString, 'capacityString');
+      const priceString = data.price;
+      const availableCountString = data.time_display;
+      const capacity = formatCapacity(capacityString);
+      // const price
+    } catch (error) {}
   }
 }
