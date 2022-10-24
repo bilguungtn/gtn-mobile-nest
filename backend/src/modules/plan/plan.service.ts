@@ -5,7 +5,13 @@ import { readFileSync } from 'fs';
 import { parse } from 'papaparse';
 import { PlanGroupDto } from './dto/response/plan.dto';
 import { toPlanGroupDto } from './dto/dto-mapper.helper';
-import { formatCapacity } from 'src/common/helpers/csv.helper';
+import {
+  carrierTypeCode,
+  deadlineFormat,
+  formatAvailableCount,
+  formatCapacity,
+  formatPrice,
+} from 'src/common/helpers/csv.helper';
 
 @Injectable()
 export class PlanService {
@@ -16,30 +22,6 @@ export class PlanService {
       await this.prismaService.plan_groups.findMany();
     return toPlanGroupDto(available_plan_groups);
   }
-
-  deadlineFormat = (deadline: string) => {
-    let deadlines = {
-      deadline_day: null,
-      deadline_time: null,
-    };
-    switch (deadline) {
-      case '15日営業時間(18:30)まで':
-        deadlines = {
-          deadline_day: '15',
-          deadline_time: '18:30',
-        };
-        break;
-      case '月末の最終日以外なら翌月受付対応可能':
-        deadlines = {
-          deadline_day: '15',
-          deadline_time: '18:30',
-        };
-        break;
-      default:
-        deadlines;
-    }
-    return deadlines;
-  };
 
   public async initialPlanImport(): Promise<any> {
     try {
@@ -61,9 +43,6 @@ export class PlanService {
       const { data } = csvParse;
       if (!data) throw new HttpException('bad request', 400);
       // return data;
-      for (const item of data) {
-        this.createDataCharge(item);
-      }
       await this.prismaService.plan_groups.deleteMany();
 
       for (const item of data) {
@@ -71,7 +50,7 @@ export class PlanService {
         const planGroupId = item['plan_group_id'];
         // deadline parse
 
-        const deadline = this.deadlineFormat(item['deadline_time']);
+        const deadline = deadlineFormat(item['deadline_time']);
 
         if (planGroupId !== '-' && planGroupId) {
           const planItem = {
@@ -82,8 +61,7 @@ export class PlanService {
               Object.values(item)[1] === 'なし'
                 ? null
                 : parseFloat(item['capacity']),
-            // todo carrier type  String(Object.values(item)[10])
-            carrier_type_code: 99,
+            carrier_type_code: carrierTypeCode(item['carrier_type']),
           };
           await this.prismaService.plan_groups.upsert({
             where: { id: +planGroupId },
@@ -107,10 +85,10 @@ export class PlanService {
               },
             },
           });
+          this.createDataCharge(item);
         }
       }
 
-      this.planImportPrice();
       const res: any = {
         statusCode: 201,
         message: 'Created user data.',
@@ -139,12 +117,11 @@ export class PlanService {
     const { data } = parsedCsv;
     if (!data) throw new HttpException('bad request', 400);
     for (const item of parsedCsv.data) {
-      const price = item['price'].replace(/円|,/g, '');
-      if (price !== '')
+      if (item['price'] !== '')
         await this.prismaService.plans.update({
           where: { id: +item['happiness_id'] },
           data: {
-            price: +price,
+            price: formatPrice(item['price']),
           },
         });
     }
@@ -181,9 +158,18 @@ export class PlanService {
       const capacityString = data.capacity_mb;
       if (capacityString === '不可' || capacityString === '') return null;
       console.log(capacityString, 'capacityString');
-      const priceString = data.price;
-      const availableCountString = data.time_display;
       const capacity = formatCapacity(capacityString);
+      const price = formatPrice(data.price);
+      const available_count = formatAvailableCount(data.time_display);
+
+      const data_charge = await this.prismaService.data_charges.create({
+        data: {
+          capacity,
+          price,
+          available_count,
+        },
+      });
+      return data_charge;
       // const price
     } catch (error) {}
   }
