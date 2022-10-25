@@ -6,6 +6,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { IRequestWithUser } from 'src/common/interfaces/request_with_user.interface';
@@ -17,6 +18,7 @@ export class PlanController {
   constructor(private readonly planService: PlanService) {}
 
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
   @Get('/available_plan')
   async getAvailablePlan(@Req() req: IRequestWithUser): Promise<PlanGroupDto> {
     return await this.planService.getAvailablePlan();
@@ -43,15 +45,15 @@ export class PlanController {
     return await this.planService.planImportPrice();
   }
 
-  /**
-   * Get profile by id.
-   * @param {any} req
-   * @returns {any}
-   */
-  @UseGuards(JwtAuthGuard)
-  @Get('/plan_id')
-  async getMainPlanIdByUserId(@Req() req: IRequestWithUser) {
-    const { user } = req;
-    return await this.planService.getMainPlanIdByUserId(user.gtn_id);
-  }
+  // /**
+  //  * Get profile by id.
+  //  * @param {any} req
+  //  * @returns {any}
+  //  */
+  // @UseGuards(JwtAuthGuard)
+  // @Get('/plan_id')
+  // async getMainPlanIdByUserId(@Req() req: IRequestWithUser) {
+  //   const { user } = req;
+  //   return await this.planService.getMainPlanIdByUserId(user.gtn_id);
+  // }
 }

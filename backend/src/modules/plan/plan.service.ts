@@ -3,8 +3,8 @@ import { PrismaService } from 'prisma/prisma.service';
 import { SuccessResponseDto } from 'src/common/responses/success-response.dto';
 import { readFileSync } from 'fs';
 import { parse } from 'papaparse';
-import { PlanGroupDto } from './dto/response/plan.dto';
-import { toPlanGroupDto } from './dto/dto-mapper.helper';
+import { PlanGroupDto } from 'src/modules/plan/dto/response/plan.dto';
+import { toPlanGroupDto } from 'src/modules/plan/dto/dto-mapper.helper';
 import {
   carrierTypeCode,
   deadlineFormat,
@@ -21,6 +21,27 @@ export class PlanService {
     const available_plan_groups =
       await this.prismaService.plan_groups.findMany();
     return toPlanGroupDto(available_plan_groups);
+  }
+
+  public async getMainPlanIdByUserId(id: number): Promise<number> {
+    try {
+      const sim = await this.prismaService.sims.findFirst({
+        where: {
+          profile_id: +id,
+        },
+      });
+      if (!sim.happiness_id) throw new HttpException('error', 400);
+      const plan_id = await this.prismaService.plans.findUnique({
+        where: { id: +sim.happiness_id },
+        select: {
+          id: true,
+        },
+      });
+      if (!plan_id) throw new HttpException('plan not found', 400);
+      return plan_id.id;
+    } catch (error) {
+      throw new HttpException(error, 400);
+    }
   }
 
   public async initialPlanImport(): Promise<any> {
@@ -63,7 +84,7 @@ export class PlanService {
                 : parseFloat(item['capacity']),
             carrier_type_code: carrierTypeCode(item['carrier_type']),
           };
-          await this.prismaService.plan_groups.upsert({
+          const test = await this.prismaService.plan_groups.upsert({
             where: { id: +planGroupId },
             create: {
               id: +planGroupId,
@@ -132,32 +153,10 @@ export class PlanService {
     return res;
   }
 
-  public async getMainPlanIdByUserId(id: number): Promise<number> {
-    try {
-      const sim = await this.prismaService.sims.findFirst({
-        where: {
-          profile_id: +id,
-        },
-      });
-      if (!sim.happiness_id) throw new HttpException('error', 400);
-      const plan_id = await this.prismaService.plans.findUnique({
-        where: { id: +sim.happiness_id },
-        select: {
-          id: true,
-        },
-      });
-      if (!plan_id) throw new HttpException('plan not found', 400);
-      return plan_id.id;
-    } catch (error) {
-      throw new HttpException(error, 400);
-    }
-  }
-
   public async createDataCharge(data): Promise<any> {
     try {
       const capacityString = data.capacity_mb;
       if (capacityString === '不可' || capacityString === '') return null;
-      console.log(capacityString, 'capacityString');
       const capacity = formatCapacity(capacityString);
       const price = formatPrice(data.price);
       const available_count = formatAvailableCount(data.time_display);
@@ -167,10 +166,15 @@ export class PlanService {
           capacity,
           price,
           available_count,
+          data_charges_plan_groups: {
+            create: {
+              plan_group_id: +data.plan_group_id,
+            },
+          },
         },
       });
+
       return data_charge;
-      // const price
     } catch (error) {}
   }
 }

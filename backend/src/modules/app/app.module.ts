@@ -18,6 +18,8 @@ import { AuthModule } from 'src/modules/auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { PlanModule } from 'src/modules/plan/plan.module';
 import { SimsModule } from 'src/modules/sims/sims.module';
+import { DataChargeModule } from 'src/modules/data-charge/data-charge.module';
+import { DataTrafficModule } from 'src/data-traffic/data-traffic.module';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { SimsModule } from 'src/modules/sims/sims.module';
     ProfileModule,
     PlanModule,
     SimsModule,
+    DataChargeModule,
+    DataTrafficModule,
     ConfigModule.forRoot({
       envFilePath: `${process.cwd()}/.env`,
       load: [configuration],

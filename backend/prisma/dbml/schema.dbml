@@ -39,6 +39,7 @@ Table data_charges {
   price Int [not null]
   available_count Int [not null]
   data_charge_histories data_charge_histories [not null]
+  data_charges_plan_groups data_charges_plan_groups [not null]
 }
 
 Table data_charge_histories {
@@ -233,7 +234,7 @@ Ref: data_charge_histories.data_charge_id > data_charges.id [delete: Cascade]
 
 Ref: data_charge_histories.profile_id > profiles.id [delete: Cascade]
 
-Ref: data_charges_plan_groups.data_charge_id - data_charges.id [delete: Cascade]
+Ref: data_charges_plan_groups.data_charge_id > data_charges.id [delete: Cascade]
 
 Ref: data_charges_plan_groups.plan_group_id > plan_groups.id [delete: Cascade]
 

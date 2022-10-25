@@ -45,7 +45,7 @@ model data_charges {
   price                    Int
   available_count          Int
   data_charge_histories    data_charge_histories[]
-  data_charges_plan_groups data_charges_plan_groups[] @ignore
+  data_charges_plan_groups data_charges_plan_groups[]
 }
 
 model data_charge_histories {
