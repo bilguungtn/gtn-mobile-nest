@@ -10,6 +10,7 @@ import { PrismaService } from 'prisma/prisma.service';
 import { toProfileResponseDto } from 'src/common/helpers/dto-mapper.helper';
 import { SuccessResponseDto } from 'src/common/responses/success-response.dto';
 import { ProfileDto } from 'src/modules/profile/dto/response/profile.dto';
+import { ProfileReqDto } from './dto/requests/profile.dto';
 
 @Injectable()
 export class ProfileService {
@@ -29,8 +30,16 @@ export class ProfileService {
     return toProfileResponseDto(profile);
   }
 
+  public async loginInfo(id: string): Promise<any> {
+    const login_info = await this.prismaService.profiles.findFirst({
+      where: { id: +id },
+      select: { email: true },
+    });
+    return login_info;
+  }
+
   public async updateProfile(
-    data: ProfileDto,
+    data: ProfileReqDto,
     id: number,
   ): Promise<SuccessResponseDto> {
     try {
@@ -46,7 +55,7 @@ export class ProfileService {
         data: {
           name: data.name,
           name_kana: data.name_kana,
-          birthday: data.birthdate,
+          birthday: new Date(data.birthdate),
           contact_phone_number: data.contact_phone_number,
           cell_phone_number: data.cell_phone_number,
           sims: {
@@ -75,7 +84,9 @@ export class ProfileService {
               where: { profile_id: id },
               data: {
                 classification_code: data.visa_classification_code,
-                period_of_validity_date: data.visa_period_of_validity_date,
+                period_of_validity_date: new Date(
+                  data.visa_period_of_validity_date,
+                ),
               },
             },
           },
@@ -95,6 +106,12 @@ export class ProfileService {
 
   public async changeEmail(id: number, email: string) {
     try {
+      const duplicated = await this.prismaService.profiles.findFirst({
+        where: { email },
+      });
+      if (duplicated)
+        throw new HttpException('EMAIL_ALREADY_USED', HttpStatus.FOUND);
+      //send email
       await this.prismaService.profiles.update({
         where: { id },
         data: {
@@ -102,8 +119,8 @@ export class ProfileService {
         },
       });
       const res: any = {
-        statusCode: 201,
-        message: 'Created user data.',
+        statusCode: 200,
+        message: 'EMAIL_UPDATED',
       };
       return res;
     } catch (error) {

@@ -19,7 +19,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { PlanModule } from 'src/modules/plan/plan.module';
 import { SimsModule } from 'src/modules/sims/sims.module';
 import { DataChargeModule } from 'src/modules/data-charge/data-charge.module';
-import { DataTrafficModule } from 'src/data-traffic/data-traffic.module';
+import { DataTrafficModule } from 'src/modules/data-traffic/data-traffic.module';
 
 @Module({
   imports: [
@@ -42,14 +42,7 @@ import { DataTrafficModule } from 'src/data-traffic/data-traffic.module';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    PrismaService,
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: JwtAuthGuard,
-    // },
-  ],
+  providers: [AppService, PrismaService],
   exports: [],
 })
 export class AppModule {}

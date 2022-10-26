@@ -13,6 +13,8 @@ import { diskStorage } from 'multer';
 import { SuccessResponseDto } from 'src/common/responses/success-response.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { IRequestWithUser } from 'src/common/interfaces/request_with_user.interface';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { ProfileReqDto } from './dto/requests/profile.dto';
 
 @Controller()
 export class ProfileController {
@@ -24,6 +26,7 @@ export class ProfileController {
    * @returns {any}
    */
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
   @Get('/profile_info')
   async getProfile(@Req() req: IRequestWithUser) {
     const { user } = req;
@@ -32,17 +35,30 @@ export class ProfileController {
 
   /**
    * Update profile.
+   * @param {ProfileReqDto} data
+   * @returns {SuccessResponseDto}
+   */
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @Patch('/profile_info')
+  async updateProfile(
+    @Body() data: ProfileReqDto,
+    @Req() req: IRequestWithUser,
+  ): Promise<SuccessResponseDto> {
+    const { user } = req;
+    return await this.profileService.updateProfile(data, user.gtn_id);
+  }
+
+  /**
+   * Update profile.
    * @param {UpdateUserProfileRequest} data
    * @returns {SuccessResponseDto}
    */
   @UseGuards(JwtAuthGuard)
-  @Patch('/profile_info')
-  async updateProfile(
-    @Body() data: any,
-    @Req() req: any,
-  ): Promise<SuccessResponseDto> {
+  @Get('/login_info')
+  async loginInfo(@Req() req: any): Promise<SuccessResponseDto> {
     const { user } = req;
-    return await this.profileService.updateProfile(data, user.gtn_id);
+    return await this.profileService.loginInfo(user.gtn_id);
   }
 
   /**
