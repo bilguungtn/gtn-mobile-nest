@@ -15,7 +15,13 @@ async function bootstrap() {
     .setTitle('Apps example')
     .setDescription('Nest Mobile API description')
     .setVersion('1.0')
-    .addTag('mobile')
+    .addBasicAuth(
+      {
+        type: 'http',
+        scheme: 'basic',
+      },
+      'basic',
+    )
     .addBearerAuth(
       {
         type: 'http',

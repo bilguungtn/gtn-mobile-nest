@@ -5,8 +5,8 @@ import {
   formatCapacity,
   formatPrice,
 } from 'src/common/helpers/csv.helper';
-import { PlanService } from '../plan/plan.service';
-import { DataChargeRequestDto } from './dto/request/data-charge.dto';
+import { PlanService } from 'src/modules/plan/plan.service';
+import { DataChargeRequestDto } from 'src/modules/data-charge/dto/request/data-charge.dto';
 
 @Injectable()
 export class DataChargeService {
@@ -49,7 +49,6 @@ export class DataChargeService {
       user.gtn_id,
     );
     const plan_id = parseInt(data.plan_id);
-    console.log(mainPlanId, plan_id);
 
     if (mainPlanId !== plan_id) throw new NotFoundException();
 
@@ -60,7 +59,6 @@ export class DataChargeService {
     });
 
     if (!eloquentDatacharge) throw new NotFoundException();
-    console.log(eloquentDatacharge);
 
     return eloquentDatacharge;
   }

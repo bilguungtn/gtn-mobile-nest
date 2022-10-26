@@ -1,8 +1,7 @@
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { IRequestWithUser } from 'src/common/interfaces/request_with_user.interface';
-import { PlanService } from '../plan/plan.service';
-import { DataChargeService } from './data-charge.service';
+import { DataChargeService } from 'src/modules/data-charge/data-charge.service';
 
 @Controller()
 export class DataChargeController {
@@ -12,8 +11,6 @@ export class DataChargeController {
   @Get('/applydata')
   async getAvailablePlan(@Req() req: IRequestWithUser): Promise<any> {
     const { user } = req;
-    console.log(user, 'user');
-    // return user;
     return await this.dataChargeService.applyDataCharge(
       {
         plan_id: '701201118',

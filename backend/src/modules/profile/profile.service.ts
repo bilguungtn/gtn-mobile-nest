@@ -10,13 +10,12 @@ import { PrismaService } from 'prisma/prisma.service';
 import { toProfileResponseDto } from 'src/common/helpers/dto-mapper.helper';
 import { SuccessResponseDto } from 'src/common/responses/success-response.dto';
 import { ProfileDto } from 'src/modules/profile/dto/response/profile.dto';
-import { ProfileReqDto } from './dto/requests/profile.dto';
+import { ProfileReqDto } from 'src/modules/profile/dto/requests/profile.dto';
+import { LoginInfoDto } from 'src/modules/profile/dto/login_info.dto';
 
 @Injectable()
 export class ProfileService {
-  constructor(
-    private prismaService: PrismaService, // private profileService: ProfileService,
-  ) {}
+  constructor(private prismaService: PrismaService) {}
 
   public async getProfile(id: any): Promise<ProfileDto> {
     const profile = await this.prismaService.profiles.findFirst({
@@ -30,9 +29,9 @@ export class ProfileService {
     return toProfileResponseDto(profile);
   }
 
-  public async loginInfo(id: string): Promise<any> {
+  public async loginInfo(id: number): Promise<LoginInfoDto> {
     const login_info = await this.prismaService.profiles.findFirst({
-      where: { id: +id },
+      where: { id },
       select: { email: true },
     });
     return login_info;
@@ -109,8 +108,9 @@ export class ProfileService {
       const duplicated = await this.prismaService.profiles.findFirst({
         where: { email },
       });
-      if (duplicated)
-        throw new HttpException('EMAIL_ALREADY_USED', HttpStatus.FOUND);
+      if (duplicated) {
+        return new HttpException('EMAIL_ALREADY_USED', HttpStatus.FOUND);
+      }
       //send email
       await this.prismaService.profiles.update({
         where: { id },
@@ -124,7 +124,7 @@ export class ProfileService {
       };
       return res;
     } catch (error) {
-      throw new Error('error');
+      throw new Error(error);
     }
   }
 

@@ -7,14 +7,20 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ProfileService } from 'src/modules/profile/profile.service';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiFoundResponse,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import { ProfileService } from 'src/modules/profile/profile.service';
 import { SuccessResponseDto } from 'src/common/responses/success-response.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { IRequestWithUser } from 'src/common/interfaces/request_with_user.interface';
-import { ApiBearerAuth } from '@nestjs/swagger';
-import { ProfileReqDto } from './dto/requests/profile.dto';
+import { ProfileReqDto } from 'src/modules/profile/dto/requests/profile.dto';
+import { LoginInfoDto } from 'src/modules/profile/dto/login_info.dto';
 
 @Controller()
 export class ProfileController {
@@ -22,7 +28,7 @@ export class ProfileController {
 
   /**
    * Get profile by id.
-   * @param {any} req
+   * @param {IRequestWithUser} req
    * @returns {any}
    */
   @UseGuards(JwtAuthGuard)
@@ -36,6 +42,7 @@ export class ProfileController {
   /**
    * Update profile.
    * @param {ProfileReqDto} data
+   * @param {IRequestWithUser} req
    * @returns {SuccessResponseDto}
    */
   @UseGuards(JwtAuthGuard)
@@ -51,44 +58,56 @@ export class ProfileController {
 
   /**
    * Update profile.
-   * @param {UpdateUserProfileRequest} data
+   * @param {LoginInfoDto} data
+   * @param {IRequestWithUser} req
    * @returns {SuccessResponseDto}
    */
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiCreatedResponse({ description: 'Email return', type: LoginInfoDto })
   @Get('/login_info')
-  async loginInfo(@Req() req: any): Promise<SuccessResponseDto> {
+  async loginInfo(@Req() req: IRequestWithUser): Promise<LoginInfoDto> {
     const { user } = req;
     return await this.profileService.loginInfo(user.gtn_id);
   }
 
   /**
    * Update profile.
-   * @param {UpdateUserProfileRequest} data
+   * @param {LoginInfoDto} data
+   * @param {IRequestWithUser} req
    * @returns {SuccessResponseDto}
    */
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiResponse({
+    status: 200,
+    description: 'EMAIL_UPDATED',
+    type: SuccessResponseDto,
+  })
+  @ApiResponse({ status: 201, description: 'VERIFICATION_EMAIL_SENT' })
+  @ApiFoundResponse({ status: 302, description: 'EMAIL_ALREADY_USED' })
   @Patch('/login_info')
   async changeEmail(
-    @Body() data: any,
-    @Req() req: any,
+    @Body() data: LoginInfoDto,
+    @Req() req: IRequestWithUser,
   ): Promise<SuccessResponseDto> {
     const { user } = req;
     return await this.profileService.changeEmail(user.gtn_id, data.email);
   }
 
-  /**
-   * Get profile data from csv.
-   * @returns {any}
-   */
-  @UseInterceptors(
-    FileInterceptor('file_asset', {
-      storage: diskStorage({
-        destination: './files',
-      }),
-    }),
-  )
-  @Get('/salesForceCustumorImporter')
-  async salesForceCustumorImporter() {
-    return await this.profileService.salesForceCustumorImporter();
-  }
+  // /**
+  //  * Get profile data from csv.
+  //  * @returns {any}
+  //  */
+  // @UseInterceptors(
+  //   FileInterceptor('file_asset', {
+  //     storage: diskStorage({
+  //       destination: './files',
+  //     }),
+  //   }),
+  // )
+  // @Get('/salesForceCustumorImporter')
+  // async salesForceCustumorImporter() {
+  //   return await this.profileService.salesForceCustumorImporter();
+  // }
 }
