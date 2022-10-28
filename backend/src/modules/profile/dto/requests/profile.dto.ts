@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, MinLength } from 'class-validator';
 
 export class ImportUserCommand {
   id: number;
@@ -79,4 +79,12 @@ export class ProfileReqDto {
   })
   @IsString()
   visa_period_of_validity_date: string;
+}
+
+export class PasswordReqDto {
+  @ApiProperty()
+  @IsString()
+  @MinLength(6)
+  @IsNotEmpty()
+  password: string;
 }

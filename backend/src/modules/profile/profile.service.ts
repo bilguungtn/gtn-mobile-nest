@@ -10,7 +10,10 @@ import { PrismaService } from 'prisma/prisma.service';
 import { toProfileResponseDto } from 'src/common/helpers/dto-mapper.helper';
 import { SuccessResponseDto } from 'src/common/responses/success-response.dto';
 import { ProfileDto } from 'src/modules/profile/dto/response/profile.dto';
-import { ProfileReqDto } from 'src/modules/profile/dto/requests/profile.dto';
+import {
+  PasswordReqDto,
+  ProfileReqDto,
+} from 'src/modules/profile/dto/requests/profile.dto';
 import { LoginInfoDto } from 'src/modules/profile/dto/login_info.dto';
 
 @Injectable()
@@ -30,11 +33,42 @@ export class ProfileService {
   }
 
   public async loginInfo(id: number): Promise<LoginInfoDto> {
-    const login_info = await this.prismaService.profiles.findFirst({
+    const login_info = await this.prismaService.profiles.findUnique({
       where: { id },
       select: { email: true },
     });
     return login_info;
+  }
+
+  public async changeEmail(
+    id: number,
+    email: string,
+  ): Promise<SuccessResponseDto> {
+    try {
+      const duplicated = await this.prismaService.profiles.findFirst({
+        where: { email },
+      });
+      if (duplicated)
+        throw new HttpException('EMAIL_ALREADY_USED', HttpStatus.FOUND);
+      //send email
+      await this.prismaService.profiles.update({
+        where: { id },
+        data: {
+          email,
+        },
+      });
+      const res: any = {
+        statusCode: 200,
+        message: 'EMAIL_UPDATED',
+      };
+      return res;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  public async newPassword(id: number, data: PasswordReqDto) {
+    return 'password change';
   }
 
   public async updateProfile(
@@ -96,31 +130,6 @@ export class ProfileService {
       const res: any = {
         statusCode: 201,
         message: 'Updated profile data.',
-      };
-      return res;
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  public async changeEmail(id: number, email: string) {
-    try {
-      const duplicated = await this.prismaService.profiles.findFirst({
-        where: { email },
-      });
-      if (duplicated) {
-        return new HttpException('EMAIL_ALREADY_USED', HttpStatus.FOUND);
-      }
-      //send email
-      await this.prismaService.profiles.update({
-        where: { id },
-        data: {
-          email,
-        },
-      });
-      const res: any = {
-        statusCode: 200,
-        message: 'EMAIL_UPDATED',
       };
       return res;
     } catch (error) {
