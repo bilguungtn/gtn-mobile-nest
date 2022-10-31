@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { SuccessResponseDto } from 'src/common/responses/success-response.dto';
 import { readFileSync } from 'fs';
@@ -17,10 +17,63 @@ import {
 export class PlanService {
   constructor(private prismaService: PrismaService) {}
 
-  public async getAvailablePlan(): Promise<PlanGroupDto> {
-    const available_plan_groups =
-      await this.prismaService.plan_groups.findMany();
-    return toPlanGroupDto(available_plan_groups);
+  public async getAvailablePlan(phoneNumber: string): Promise<PlanGroupDto> {
+    try {
+      const sim = await this.prismaService.sims.findFirst({
+        where: { sim_number: phoneNumber },
+        select: { happiness_id: true },
+      });
+
+      if (!sim.happiness_id) {
+        throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
+      }
+      const available_plan_groups = await this.prismaService.plans.findMany({
+        where: {
+          id: +sim.happiness_id,
+        },
+        select: {
+          plan_groups: true,
+        },
+      });
+      return toPlanGroupDto(available_plan_groups);
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async getCurrentPlan(phoneNumber: string): Promise<any> {
+    try {
+      const profile = await this.prismaService.sims.findFirst({
+        where: { sim_number: phoneNumber },
+        select: {
+          profiles: {
+            select: {
+              user: { select: { created_at: true } },
+              name: true,
+              name_kana: true,
+              contact_phone_number: true,
+              cell_phone_number: true,
+              email: true,
+              addresses: {
+                select: {
+                  postal_code: true,
+                  address: true,
+                },
+              },
+            },
+          },
+          happiness_id: true,
+        },
+      });
+      console.log(profile);
+      const mainPlanId = this.prismaService.plans.findFirst({
+        where: { id: +profile.happiness_id },
+        select: { id: true, name: true, capacity: true },
+      });
+      return profile;
+    } catch (err) {
+      throw err;
+    }
   }
 
   public async getMainPlanIdByUserId(id: number): Promise<number> {

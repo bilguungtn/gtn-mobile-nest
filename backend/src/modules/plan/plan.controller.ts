@@ -1,12 +1,13 @@
 import {
   Controller,
   Get,
+  Headers,
   Req,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiHeader } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { IRequestWithUser } from 'src/common/interfaces/request_with_user.interface';
@@ -19,9 +20,30 @@ export class PlanController {
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
+  @ApiHeader({
+    name: 'X-Phone-Number',
+    description: '電話番号(SIM番号)を投げてください example: 09000000000',
+    example: '09000000000',
+  })
   @Get('/available_plan')
-  async getAvailablePlan(@Req() req: IRequestWithUser): Promise<PlanGroupDto> {
-    return await this.planService.getAvailablePlan();
+  async getAvailablePlan(
+    @Headers('X-Phone-Number') phoneNumber: string,
+  ): Promise<PlanGroupDto> {
+    return await this.planService.getAvailablePlan(phoneNumber);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiHeader({
+    name: 'X-Phone-Number',
+    description: '電話番号(SIM番号)を投げてください example: 09000000000',
+    example: '09000000000',
+  })
+  @Get('/current_plan')
+  async getCurrentPlan(
+    @Headers('X-Phone-Number') phoneNumber: string,
+  ): Promise<any> {
+    return await this.planService.getCurrentPlan(phoneNumber);
   }
 
   /**

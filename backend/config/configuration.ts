@@ -15,5 +15,9 @@ export const configuration = () => {
       http_basic_username: process.env.HTTP_BASIC_USER,
       http_basic_password: process.env.HTTP_BASIC_PASS,
     },
+    auth0: {
+      auth0_issuer_url: process.env.AUTH0_ISSUER_URL,
+      auth0_audience: process.env.AUTH0_AUDIENCE,
+    },
   };
 };

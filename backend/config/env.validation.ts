@@ -9,4 +9,6 @@ export const validationSchema = Joi.object({
   JWT_EXPIRES_IN: Joi.number().required(),
   HTTP_BASIC_USER: Joi.string().required(),
   HTTP_BASIC_PASS: Joi.string().required(),
+  AUTH0_ISSUER_URL: Joi.string().required(),
+  AUTH0_AUDIENCE: Joi.string().required(),
 });

@@ -5,11 +5,19 @@ import { PlanGroupDto } from 'src/modules/plan/dto/response/plan.dto';
  * @param data user data.
  * @returns {PlanGroupDto} UserDetailsResponseDto.
  */
-export const toPlanGroupDto = (data): PlanGroupDto => {
+export const toPlanGroupDto = (plan_groups): Promise<any> => {
   const dto: any = {
-    id: data.id,
-    deadline_day: data.deadline_day,
-    deadline_time: data.deadline_day,
+    data: [
+      {
+        plans: plan_groups.map((data) => {
+          return {
+            id: data?.plan_groups?.id,
+            deadline_day: data?.plan_groups?.deadline_day,
+            deadline_time: data?.plan_groups?.deadline_day,
+          };
+        }),
+      },
+    ],
   };
   return dto;
 };
