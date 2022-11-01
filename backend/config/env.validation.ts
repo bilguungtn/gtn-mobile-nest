@@ -11,4 +11,10 @@ export const validationSchema = Joi.object({
   HTTP_BASIC_PASS: Joi.string().required(),
   AUTH0_ISSUER_URL: Joi.string().required(),
   AUTH0_AUDIENCE: Joi.string().required(),
+  AWS_SES_ACCESS_KEY_ID: Joi.string().required(),
+  AWS_SES_DEFAULT_REGION: Joi.string().required(),
+  AWS_SES_SECRET_ACCESS_KEY: Joi.string().required(),
+  MAIL_FROM_ADDRESS: Joi.string().required(),
+
+  REDIS_URL: Joi.string().required(),
 });

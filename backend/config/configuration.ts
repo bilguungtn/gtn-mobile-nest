@@ -19,5 +19,11 @@ export const configuration = () => {
       auth0_issuer_url: process.env.AUTH0_ISSUER_URL,
       auth0_audience: process.env.AUTH0_AUDIENCE,
     },
+    mail: {
+      from_mail: process.env.MAIL_FROM_ADDRESS,
+      aws_ses_access_key_id: process.env.AWS_SES_ACCESS_KEY_ID,
+      aws_region: process.env.AWS_SES_DEFAULT_REGION,
+      aws_ses_secret_access_key: process.env.AWS_SES_SECRET_ACCESS_KEY,
+    },
   };
 };
