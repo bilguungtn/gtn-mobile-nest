@@ -6,9 +6,9 @@ import {
   OnQueueError,
   OnQueueCompleted,
 } from '@nestjs/bull';
-import { ConfigService } from '@nestjs/config';
 import { Job } from 'bull';
-import { MailService } from './mail.service';
+import { ConfigService } from '@nestjs/config';
+import { MailService } from 'src/modules/mail/mail.service';
 
 @Processor('mailing')
 export class MailingConsumer {
@@ -36,14 +36,18 @@ export class MailingConsumer {
   @OnQueueFailed()
   onFailed(job: Job, err: Error) {
     console.log(`Failed job ${job.name}.`);
-    // console.dir(job, { depth: null });
   }
   @Process('suspend-line')
   async sendSuspendLine(job: Job) {
+    const { profile, sim } = job.data;
     const mailData = {
       to: `${this.configService.get<string>('mail.from_mail')}`,
       context: {
-        title: 'title',
+        title: '【GTN Mobile】回線停止の申込がありました',
+        happiness_id: sim.happiness_id,
+        name: profile.name,
+        birthday: new Date(profile.birthday),
+        email: profile.email,
       },
     };
     await this.mailService.sendSuspendLine(mailData);

@@ -3,13 +3,17 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { join } from 'path';
-import { UserService } from '../user/user.service';
-import { MailingConsumer } from './mail.processor';
-import { MailService } from './mail.service';
 import aws, { SES } from 'aws-sdk';
+import { join } from 'path';
+
 import { PrismaService } from 'prisma/prisma.service';
-import { LineService } from '../line/line.service';
+import { MailingConsumer } from 'src/modules/mail/mail.processor';
+import { MailService } from 'src/modules/mail/mail.service';
+import { UserService } from 'src/modules/user/user.service';
+import { LineService } from 'src/modules/line/line.service';
+import { SimsService } from 'src/modules/sims/sims.service';
+import { ProfileService } from 'src/modules/profile/profile.service';
+
 @Module({
   imports: [
     MailerModule.forRootAsync({
@@ -31,16 +35,17 @@ import { LineService } from '../line/line.service';
         defaults: {
           from: '"no-reply" <b.baasansuren@gtn.co.jp>',
         },
-        // template: {
-        //   dir: join(
-        //     '/Users/bilguunbaasansuren/Documents/gtn/gtn-mobile-nest/backend/src/modules/mail',
-        //     'templates',
-        //   ),
-        //   adapter: new HandlebarsAdapter(),
-        //   options: {
-        //     strict: true,
-        //   },
-        // },
+        template: {
+          dir: join(
+            '/Users/bilguunbaasansuren/Documents/gtn/gtn-mobile-nest/backend/src/modules/mail',
+            'templates',
+          ),
+          // dir: join(__dirname, 'templates'),
+          adapter: new HandlebarsAdapter(),
+          options: {
+            strict: true,
+          },
+        },
       }),
       inject: [ConfigService],
     }),
@@ -58,6 +63,8 @@ import { LineService } from '../line/line.service';
     PrismaService,
     UserService,
     LineService,
+    SimsService,
+    ProfileService,
   ],
   exports: [MailService],
 })

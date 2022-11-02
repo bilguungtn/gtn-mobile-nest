@@ -20,9 +20,9 @@ import { LoginInfoDto } from 'src/modules/profile/dto/login_info.dto';
 export class ProfileService {
   constructor(private prismaService: PrismaService) {}
 
-  public async getProfile(id: any): Promise<ProfileDto> {
+  public async getProfile(gtn_id: any): Promise<ProfileDto> {
     const profile = await this.prismaService.profiles.findFirst({
-      where: { id: +id },
+      where: { id: +gtn_id },
       include: {
         addresses: true,
         sims: true,
@@ -137,13 +137,30 @@ export class ProfileService {
     }
   }
 
-  public async getProfileWithSim(id: string, simNumber: string): Promise<any> {
+  public async getProfileWithSim(
+    gtn_id: number,
+    // phoneNumber: string,
+  ): Promise<any> {
     const profile = await this.prismaService.profiles.findFirst({
-      where: { id: +id },
-      include: {
-        addresses: true,
+      where: { id: +gtn_id },
+      select: {
+        name: true,
+        name_kana: true,
+        birthday: true,
+        contact_phone_number: true,
+        cell_phone_number: true,
+        email: true,
+        addresses: {
+          select: {
+            address: true,
+          },
+        },
+        visas: {
+          select: {
+            period_of_validity_date: true,
+          },
+        },
         sims: true,
-        visas: true,
       },
     });
     return profile;

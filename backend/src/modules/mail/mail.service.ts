@@ -16,8 +16,8 @@ export class MailService {
   sendSuspendLine = async ({ to, context }: any) => {
     await this.mailerService.sendMail({
       to,
-      subject: `subject`,
-      // template: './application-form-fill-user',
+      subject: context.title,
+      template: './suspend-line-requested',
       context,
     });
   };
