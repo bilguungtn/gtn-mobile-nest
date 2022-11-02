@@ -52,4 +52,20 @@ export class MailingConsumer {
     };
     await this.mailService.sendSuspendLine(mailData);
   }
+
+  @Process('restart-line')
+  async sendRestartLine(job: Job) {
+    const { profile, sim } = job.data;
+    const mailData = {
+      to: `${this.configService.get<string>('mail.from_mail')}`,
+      context: {
+        title: '【GTN Mobile】回線再開の申込がありました',
+        happiness_id: sim.happiness_id,
+        name: profile.name,
+        birthday: new Date(profile.birthday),
+        email: profile.email,
+      },
+    };
+    await this.mailService.sendRestartLine(mailData);
+  }
 }

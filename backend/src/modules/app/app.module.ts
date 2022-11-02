@@ -4,6 +4,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { NestCrawlerModule } from 'nest-crawler';
 import { BullModule } from '@nestjs/bull';
+import { APP_GUARD } from '@nestjs/core';
 
 import { PrismaModule } from 'prisma/prisma.module';
 import { PrismaService } from 'prisma/prisma.service';
@@ -16,13 +17,12 @@ import { AppController } from 'src/modules/app/app.controller';
 import { UserModule } from 'src/modules/user/user.module';
 import { ProfileModule } from 'src/modules/profile/profile.module';
 import { AuthModule } from 'src/modules/auth/auth.module';
-import { APP_GUARD } from '@nestjs/core';
 import { PlanModule } from 'src/modules/plan/plan.module';
 import { SimsModule } from 'src/modules/sims/sims.module';
 import { DataChargeModule } from 'src/modules/data-charge/data-charge.module';
 import { DataTrafficModule } from 'src/modules/data-traffic/data-traffic.module';
-import { LineModule } from '../line/line.module';
-import { MailModule } from '../mail/mail.module';
+import { LineModule } from 'src/modules/line/line.module';
+import { MailModule } from 'src/modules/mail/mail.module';
 
 @Module({
   imports: [

@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
+import { toSimsDto } from './dto/dto-mapper.helper';
+import { SimResponseDto, SimsFullDto } from './dto/responses/get_sims.dto';
 
 @Injectable()
 export class SimsService {
@@ -20,10 +22,11 @@ export class SimsService {
     });
     return profile || null;
   }
-  
-  public async showSimInfo(id: any): Promise<any> {
-    return await this.prismaService.sims.findFirst({
-      where: { profile_id: id },
-    });
+
+  public async getSims(id: number): Promise<any> {
+    // active umnuh sar deer 1 sar nemeed suuliin udur ni >= now()
+    const eloquentSims: SimsFullDto[] = await this.prismaService
+      .$queryRaw`SELECT * FROM sims where LAST_DAY(DATE_ADD(sims.canceled_at, INTERVAL 1 MONTH)) >= NOW() && profile_id=${id} ORDER BY sims.created_at DESC`;
+    return eloquentSims.map((item) => toSimsDto(item));
   }
 }

@@ -10,7 +10,7 @@ export class MailService {
   ) {}
 
   /**
-   * Send email. Application form complete.
+   * Send email. Suspend line notification.
    * @param {any} param0
    */
   sendSuspendLine = async ({ to, context }: any) => {
@@ -18,6 +18,19 @@ export class MailService {
       to,
       subject: context.title,
       template: './suspend-line-requested',
+      context,
+    });
+  };
+
+  /**
+   * Send email. Restart line notification.
+   * @param {any} param0
+   */
+  sendRestartLine = async ({ to, context }: any) => {
+    await this.mailerService.sendMail({
+      to,
+      subject: context.title,
+      template: './restart-line-requested',
       context,
     });
   };
