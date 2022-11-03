@@ -17,6 +17,7 @@ import {
 export class PlanService {
   constructor(private prismaService: PrismaService) {}
 
+  // TODO: database connection might change
   public async getAvailablePlan(phoneNumber: string): Promise<PlanGroupDto> {
     try {
       const sim = await this.prismaService.sims.findFirst({
@@ -41,6 +42,7 @@ export class PlanService {
     }
   }
 
+  // TODO: check
   public async getCurrentPlan(phoneNumber: string): Promise<any> {
     try {
       const profile = await this.prismaService.sims.findFirst({
@@ -65,7 +67,6 @@ export class PlanService {
           happiness_id: true,
         },
       });
-      console.log(profile);
       const mainPlanId = this.prismaService.plans.findFirst({
         where: { id: +profile.happiness_id },
         select: { id: true, name: true, capacity: true },
@@ -76,6 +77,7 @@ export class PlanService {
     }
   }
 
+  // TODO: might delete
   public async getMainPlanIdByUserId(id: number): Promise<number> {
     try {
       const sim = await this.prismaService.sims.findFirst({

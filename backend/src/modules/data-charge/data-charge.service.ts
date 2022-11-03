@@ -6,13 +6,18 @@ import {
   formatPrice,
 } from 'src/common/helpers/csv.helper';
 import { PlanService } from 'src/modules/plan/plan.service';
-import { DataChargeRequestDto } from 'src/modules/data-charge/dto/request/data-charge.dto';
+import {
+  DataChargeRequestDto,
+  toDataChargeList,
+} from 'src/modules/data-charge/dto/request/data-charge.dto';
+import { SimsService } from 'src/modules/sims/sims.service';
 
 @Injectable()
 export class DataChargeService {
   constructor(
     private prismaService: PrismaService,
     private readonly planService: PlanService,
+    private readonly simService: SimsService,
   ) {}
 
   public async createDataCharge(data): Promise<any> {
@@ -48,9 +53,8 @@ export class DataChargeService {
     const mainPlanId = await this.planService.getMainPlanIdByUserId(
       user.gtn_id,
     );
-    const plan_id = parseInt(data.plan_id);
 
-    if (mainPlanId !== plan_id) throw new NotFoundException();
+    if (mainPlanId !== parseInt(data.plan_id)) throw new NotFoundException();
 
     const eloquentDatacharge = await this.prismaService.data_charges.findFirst({
       where: {
@@ -61,5 +65,31 @@ export class DataChargeService {
     if (!eloquentDatacharge) throw new NotFoundException();
 
     return eloquentDatacharge;
+  }
+
+  public async getDataChargeList(
+    id: number,
+    phoneNumber: string,
+  ): Promise<any> {
+    const mainPlanId = await this.planService.getMainPlanIdByUserId(id);
+    const sims = await this.simService.getSims(id);
+
+    const dataChargeData = await this.prismaService.plans.findFirst({
+      where: { id: mainPlanId },
+      select: {
+        plan_groups: {
+          select: {
+            data_charges_plan_groups: {
+              select: {
+                data_charges: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    return toDataChargeList(
+      dataChargeData.plan_groups.data_charges_plan_groups,
+    );
   }
 }

@@ -46,36 +46,24 @@ export class PlanController {
     return await this.planService.getCurrentPlan(phoneNumber);
   }
 
-  /**
-   * Get profile data from csv.
-   * @returns {any}
-   */
-  @UseInterceptors(
-    FileInterceptor('file_asset', {
-      storage: diskStorage({
-        destination: './files',
-      }),
-    }),
-  )
-  @Get('/plan_import')
-  async initialPlanImport() {
-    return await this.planService.initialPlanImport();
-  }
-
-  @Get('/plan_import_price')
-  async planImportPrice() {
-    return await this.planService.planImportPrice();
-  }
-
   // /**
-  //  * Get profile by id.
-  //  * @param {any} req
+  //  * Get profile data from csv.
   //  * @returns {any}
   //  */
-  // @UseGuards(JwtAuthGuard)
-  // @Get('/plan_id')
-  // async getMainPlanIdByUserId(@Req() req: IRequestWithUser) {
-  //   const { user } = req;
-  //   return await this.planService.getMainPlanIdByUserId(user.gtn_id);
+  // @UseInterceptors(
+  //   FileInterceptor('file_asset', {
+  //     storage: diskStorage({
+  //       destination: './files',
+  //     }),
+  //   }),
+  // )
+  // @Get('/plan_import')
+  // async initialPlanImport() {
+  //   return await this.planService.initialPlanImport();
+  // }
+
+  // @Get('/plan_import_price')
+  // async planImportPrice() {
+  //   return await this.planService.planImportPrice();
   // }
 }

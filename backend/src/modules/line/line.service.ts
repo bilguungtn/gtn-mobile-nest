@@ -1,6 +1,7 @@
 import { InjectQueue } from '@nestjs/bull';
 import { HttpException, Injectable } from '@nestjs/common';
 import { Queue } from 'bull';
+import { PrismaService } from 'prisma/prisma.service';
 import { SuccessResponseDto } from 'src/common/responses/success-response.dto';
 import { ProfileService } from 'src/modules/profile/profile.service';
 import { SimsService } from 'src/modules/sims/sims.service';
@@ -9,7 +10,8 @@ import { SimsService } from 'src/modules/sims/sims.service';
 export class LineService {
   constructor(
     private readonly simsService: SimsService,
-    private readonly profileService: ProfileService,
+    // private readonly profileService: ProfileService,
+    private prismaService: PrismaService,
     @InjectQueue('mailing') private readonly mailingQueue: Queue,
   ) {}
 
@@ -21,7 +23,9 @@ export class LineService {
         phoneNumber,
       );
       if (!sim) throw new HttpException('error', 400);
-      const profile = await this.profileService.getProfileWithSim(id);
+      const profile = await this.prismaService.profiles.findFirst({
+        where: { id },
+      });
       await this.mailingQueue.add('suspend-line', { profile, sim });
       const res: any = {
         statusCode: 200,
@@ -41,9 +45,9 @@ export class LineService {
         phoneNumber,
       );
       if (!sim) throw new HttpException('error', 400);
-      const profile = await this.profileService.getProfileWithSim(id);
-
-
+      const profile = await this.prismaService.profiles.findFirst({
+        where: { id },
+      });
       await this.mailingQueue.add('suspend-line', { profile, sim });
       const res: any = {
         statusCode: 200,

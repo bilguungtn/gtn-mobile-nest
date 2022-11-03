@@ -7,7 +7,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
-import { toProfileResponseDto } from 'src/common/helpers/dto-mapper.helper';
+import {
+  toLoginInfoDto,
+  toProfileResponseDto,
+} from 'src/common/helpers/dto-mapper.helper';
 import { SuccessResponseDto } from 'src/common/responses/success-response.dto';
 import { ProfileDto } from 'src/modules/profile/dto/response/profile.dto';
 import {
@@ -32,12 +35,13 @@ export class ProfileService {
     return toProfileResponseDto(profile);
   }
 
-  public async loginInfo(id: number): Promise<LoginInfoDto> {
+  public async loginInfo(id: number): Promise<any> {
     const login_info = await this.prismaService.profiles.findUnique({
       where: { id },
       select: { email: true },
     });
-    return login_info;
+
+    return toLoginInfoDto(login_info);
   }
 
   public async changeEmail(
@@ -73,18 +77,15 @@ export class ProfileService {
 
   public async updateProfile(
     data: ProfileReqDto,
-    id: number,
+    gtn_id: number,
   ): Promise<SuccessResponseDto> {
     try {
-      const where = { id };
-      const existing_profile = await this.prismaService.profiles.findUnique({
-        where,
-      });
+      const existing_profile = await this.getProfile(gtn_id);
       if (!existing_profile) {
         throw new NotFoundException();
       }
       const profile_updated = await this.prismaService.profiles.update({
-        where,
+        where: { id: +gtn_id },
         data: {
           name: data.name,
           name_kana: data.name_kana,
@@ -94,7 +95,7 @@ export class ProfileService {
           sims: {
             updateMany: {
               where: {
-                profile_id: id,
+                profile_id: gtn_id,
               },
               data: {
                 sim_number: data.contact_phone_number,
@@ -104,7 +105,7 @@ export class ProfileService {
           addresses: {
             updateMany: {
               where: {
-                profile_id: id,
+                profile_id: gtn_id,
               },
               data: {
                 postal_code: data.postal_code,
@@ -114,7 +115,7 @@ export class ProfileService {
           },
           visas: {
             updateMany: {
-              where: { profile_id: id },
+              where: { profile_id: gtn_id },
               data: {
                 classification_code: data.visa_classification_code,
                 period_of_validity_date: new Date(
@@ -135,35 +136,6 @@ export class ProfileService {
     } catch (error) {
       throw new Error(error);
     }
-  }
-
-  public async getProfileWithSim(
-    gtn_id: number,
-    // phoneNumber: string,
-  ): Promise<any> {
-    const profile = await this.prismaService.profiles.findFirst({
-      where: { id: +gtn_id },
-      select: {
-        name: true,
-        name_kana: true,
-        birthday: true,
-        contact_phone_number: true,
-        cell_phone_number: true,
-        email: true,
-        addresses: {
-          select: {
-            address: true,
-          },
-        },
-        visas: {
-          select: {
-            period_of_validity_date: true,
-          },
-        },
-        sims: true,
-      },
-    });
-    return profile;
   }
 
   public async importUser(): Promise<string> {

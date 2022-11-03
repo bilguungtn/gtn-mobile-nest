@@ -68,7 +68,7 @@ export class ProfileController {
   }
 
   /**
-   * Update profile.
+   * Update profile info.
    * @param {LoginInfoDto} data
    * @param {IRequestWithUser} req
    * @returns {SuccessResponseDto}

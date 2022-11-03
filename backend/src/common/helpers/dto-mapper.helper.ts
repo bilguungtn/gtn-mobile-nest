@@ -1,3 +1,4 @@
+import { LoginInfoDto } from 'src/modules/profile/dto/login_info.dto';
 import { ProfileDto } from 'src/modules/profile/dto/response/profile.dto';
 
 /**
@@ -18,6 +19,18 @@ export const toProfileResponseDto = (data: any): ProfileDto => {
     visa_classification_code: data?.visas[0]?.classification_code,
     visa_period_of_validity_date:
       data?.visas[0]?.period_of_validity_date || null,
+  };
+  return dto;
+};
+
+/**
+ * Mapper => To UserDetailsResponseDto from user.
+ * @param data user data.
+ * @returns {any} UserDetailsResponseDto.
+ */
+export const toLoginInfoDto = (login_info: LoginInfoDto): any => {
+  const dto = {
+    data: [login_info],
   };
   return dto;
 };
