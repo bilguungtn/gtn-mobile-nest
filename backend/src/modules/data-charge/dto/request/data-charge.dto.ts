@@ -13,11 +13,11 @@ export const toDataChargeList = (dataCharge: any): any => {
   const dto = {
     data: dataCharge.map((data) => {
       return {
-        id: data.data_charges.id,
-        capacity: data.data_charges.capacity,
-        price: data.data_charges.price,
-        price_with_tax: data.data_charges.price * taxRate,
-        available_count: data.data_charges.available_count,
+        id: data.id,
+        capacity: data.capacity,
+        price: data.price,
+        price_with_tax: data.price * taxRate,
+        available_count: data.available_count,
       };
     }),
   };

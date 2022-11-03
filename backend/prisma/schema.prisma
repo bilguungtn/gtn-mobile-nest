@@ -40,12 +40,13 @@ model cell_phone_company_login_details {
 }
 
 model data_charges {
-  id                       Int                        @id @default(autoincrement()) @db.UnsignedInt
-  capacity                 Float
-  price                    Int
-  available_count          Int
-  data_charge_histories    data_charge_histories[]
-  data_charges_plan_groups data_charges_plan_groups[]
+  id                    Int                     @id @default(autoincrement()) @db.UnsignedInt
+  capacity              Float
+  price                 Int
+  available_count       Int
+  data_charge_histories data_charge_histories[]
+  plan_groups           plan_groups?            @relation(fields: [plan_groups_id], references: [id])
+  plan_groups_id        Int?                    @db.UnsignedInt
 }
 
 model data_charge_histories {
@@ -111,15 +112,6 @@ model profiles {
   user                  users?
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
-model data_charges_plan_groups {
-  id             Int          @id @default(autoincrement())
-  data_charge_id Int          @db.UnsignedInt
-  plan_group_id  Int          @db.UnsignedInt
-  data_charges   data_charges @relation(fields: [data_charge_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  plan_groups    plan_groups  @relation(fields: [plan_group_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-}
-
 model failed_jobs {
   id         Int      @id @default(autoincrement()) @db.UnsignedInt
   uuid       String   @unique(map: "failed_jobs_uuid_unique") @db.VarChar(255)
@@ -153,14 +145,14 @@ model password_resets {
 }
 
 model plan_groups {
-  id                                                                                      Int                        @id @default(autoincrement()) @db.UnsignedInt
-  deadline_day                                                                            String?                    @db.VarChar(255)
-  deadline_time                                                                           String?                    @db.VarChar(255)
-  available_change_plan                                                                   Boolean                    @default(false)
-  current_plan                                                                            Boolean                    @default(false)
-  data_charges_plan_groups                                                                data_charges_plan_groups[]
-  plan_groups_relations_plan_groupsToplan_groups_relations_available_change_plan_group_id plan_groups_relations[]    @relation("plan_groupsToplan_groups_relations_available_change_plan_group_id")
-  plan_groups_relations_plan_groupsToplan_groups_relations_current_plan_group_id          plan_groups_relations[]    @relation("plan_groupsToplan_groups_relations_current_plan_group_id")
+  id                                                                                      Int                     @id @default(autoincrement()) @db.UnsignedInt
+  deadline_day                                                                            String?                 @db.VarChar(255)
+  deadline_time                                                                           String?                 @db.VarChar(255)
+  available_change_plan                                                                   Boolean                 @default(false)
+  current_plan                                                                            Boolean                 @default(false)
+  data_charges                                                                            data_charges[]
+  plan_groups_relations_plan_groupsToplan_groups_relations_available_change_plan_group_id plan_groups_relations[] @relation("plan_groupsToplan_groups_relations_available_change_plan_group_id")
+  plan_groups_relations_plan_groupsToplan_groups_relations_current_plan_group_id          plan_groups_relations[] @relation("plan_groupsToplan_groups_relations_current_plan_group_id")
   plans                                                                                   plans[]
 }
 
@@ -219,7 +211,6 @@ model videos {
   zh_Hant_title String @db.VarChar(255)
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model visas {
   id                      Int       @id @default(autoincrement())
   classification_code     Int       @default(999)
@@ -240,4 +231,46 @@ model users {
   created_at        DateTime? @default(now()) @db.Timestamp(0)
   updated_at        DateTime? @default(now()) @updatedAt @db.Timestamp(0)
   profiles          profiles? @relation(fields: [email], references: [email])
+}
+
+model old_user_tbl {
+  user_record_id  Int        @id @default(autoincrement()) @db.UnsignedInt
+  user_id         String     @unique @db.VarChar(10)
+  sim_number      String?    @db.VarChar(11)
+  e_mail          String     @db.VarChar(256)
+  user_name       String?    @db.VarChar(255)
+  user_name_kana  String?    @db.VarChar(255)
+  zip_code        String?    @db.Char(7)
+  prefectures     String?    @db.VarChar(30)
+  address_1       String?    @db.VarChar(255)
+  address_2       String?    @db.VarChar(255)
+  address_3       String?    @db.VarChar(255)
+  address_4       String?    @db.VarChar(255)
+  address_5       String?    @db.VarChar(255)
+  phone           String?    @db.VarChar(11)
+  mobile_phone    String?    @db.VarChar(11)
+  billing_id      String?    @db.VarChar(12)
+  service_id      String?    @db.VarChar(10)
+  service_type    Int?
+  plan            String?    @db.VarChar(255)
+  plan_status     Int?       @db.UnsignedInt
+  signin_dt       DateTime?  @db.Date
+  cancel_dt       DateTime?  @db.Date
+  use_start_dt    DateTime?  @db.Date
+  use_end_dt      DateTime?  @db.Date
+  charge_start_dt DateTime?  @db.Date
+  charge_end_dt   DateTime?  @db.Date
+  bill_tbl        bill_tbl[]
+}
+
+model bill_tbl {
+  bill_record_id Int           @id @default(autoincrement()) @db.UnsignedInt
+  bill_id        String?       @db.VarChar(20)
+  target_name    String?       @db.VarChar(200)
+  month          Int?
+  item_name      String?       @db.VarChar(120)
+  price          Int?
+  bill_url       String?       @db.VarChar(1000)
+  user_id        String?
+  user_tbl       old_user_tbl? @relation(fields: [user_id], references: [user_id])
 }

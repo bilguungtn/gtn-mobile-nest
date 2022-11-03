@@ -33,11 +33,7 @@ export class DataChargeService {
           capacity,
           price,
           available_count,
-          data_charges_plan_groups: {
-            create: {
-              plan_group_id: +data.plan_group_id,
-            },
-          },
+          plan_groups_id: +data.plan_group_id,
         },
       });
 
@@ -79,17 +75,11 @@ export class DataChargeService {
       select: {
         plan_groups: {
           select: {
-            data_charges_plan_groups: {
-              select: {
-                data_charges: true,
-              },
-            },
+            data_charges: true,
           },
         },
       },
     });
-    return toDataChargeList(
-      dataChargeData.plan_groups.data_charges_plan_groups,
-    );
+    return toDataChargeList(dataChargeData.plan_groups.data_charges);
   }
 }

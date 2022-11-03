@@ -167,7 +167,7 @@ export class PlanService {
 
       const res: any = {
         statusCode: 201,
-        message: 'Created user data.',
+        message: 'imported data charges and plan.',
       };
       return res;
     } catch (error) {
@@ -221,11 +221,7 @@ export class PlanService {
           capacity,
           price,
           available_count,
-          data_charges_plan_groups: {
-            create: {
-              plan_group_id: +data.plan_group_id,
-            },
-          },
+          plan_groups_id: +data.plan_group_id,
         },
       });
 

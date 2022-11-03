@@ -39,7 +39,8 @@ Table data_charges {
   price Int [not null]
   available_count Int [not null]
   data_charge_histories data_charge_histories [not null]
-  data_charges_plan_groups data_charges_plan_groups [not null]
+  plan_groups plan_groups
+  plan_groups_id Int
 }
 
 Table data_charge_histories {
@@ -108,16 +109,6 @@ Table profiles {
   user users
 }
 
-Table data_charges_plan_groups {
-  id Int [pk, increment]
-  data_charge_id Int [not null]
-  plan_group_id Int [not null]
-  data_charges data_charges [not null]
-  plan_groups plan_groups [not null]
-
-  Note: 'The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.'
-}
-
 Table failed_jobs {
   id Int [pk, increment]
   uuid String [unique, not null]
@@ -146,7 +137,7 @@ Table plan_groups {
   deadline_time String
   available_change_plan Boolean [not null, default: false]
   current_plan Boolean [not null, default: false]
-  data_charges_plan_groups data_charges_plan_groups [not null]
+  data_charges data_charges [not null]
   plan_groups_relations_plan_groupsToplan_groups_relations_available_change_plan_group_id plan_groups_relations [not null]
   plan_groups_relations_plan_groupsToplan_groups_relations_current_plan_group_id plan_groups_relations [not null]
   plans plans [not null]
@@ -212,8 +203,6 @@ Table visas {
   created_at DateTime [default: `now()`]
   updated_at DateTime [default: `now()`]
   profiles profiles [not null]
-
-  Note: 'The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.'
 }
 
 Table users {
@@ -228,15 +217,55 @@ Table users {
   profiles profiles
 }
 
+Table old_user_tbl {
+  user_record_id Int [pk, increment]
+  user_id String [unique, not null]
+  sim_number String
+  e_mail String [not null]
+  user_name String
+  user_name_kana String
+  zip_code String
+  prefectures String
+  address_1 String
+  address_2 String
+  address_3 String
+  address_4 String
+  address_5 String
+  phone String
+  mobile_phone String
+  billing_id String
+  service_id String
+  service_type Int
+  plan String
+  plan_status Int
+  signin_dt DateTime
+  cancel_dt DateTime
+  use_start_dt DateTime
+  use_end_dt DateTime
+  charge_start_dt DateTime
+  charge_end_dt DateTime
+  bill_tbl bill_tbl [not null]
+}
+
+Table bill_tbl {
+  bill_record_id Int [pk, increment]
+  bill_id String
+  target_name String
+  month Int
+  item_name String
+  price Int
+  bill_url String
+  user_id String
+  user_tbl old_user_tbl
+}
+
 Ref: addresses.profile_id > profiles.id [delete: Cascade]
+
+Ref: data_charges.plan_groups_id > plan_groups.id
 
 Ref: data_charge_histories.data_charge_id > data_charges.id [delete: Cascade]
 
 Ref: data_charge_histories.profile_id > profiles.id [delete: Cascade]
-
-Ref: data_charges_plan_groups.data_charge_id > data_charges.id [delete: Cascade]
-
-Ref: data_charges_plan_groups.plan_group_id > plan_groups.id [delete: Cascade]
 
 Ref: plan_groups_relations.available_change_plan_group_id > plan_groups.id [delete: Cascade]
 
@@ -249,3 +278,5 @@ Ref: sims.profile_id > profiles.id [delete: Cascade]
 Ref: visas.profile_id > profiles.id [delete: Cascade]
 
 Ref: users.email - profiles.email
+
+Ref: bill_tbl.user_id > old_user_tbl.user_id
