@@ -44,23 +44,15 @@ import { UserService } from '../user/user.service';
       validationSchema,
     }),
     BullModule.forRootAsync({
-      useFactory: () => ({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
         redis: {
-          host: 'localhost',
-          port: 6379,
+          host: configService.get<string>('redis.host'),
+          port: Number(configService.get<number>('redis.port')),
         },
       }),
+      inject: [ConfigService],
     }),
-    // BullModule.forRootAsync({
-    //   imports: [ConfigModule],
-    //   useFactory: async (configService: ConfigService) => ({
-    //     redis: {
-    //       host: 'localhost',
-    //       port: 6379,
-    //     },
-    //   }),
-    //   inject: [ConfigService],
-    // }),
     BullModule.registerQueue({
       name: 'mailing',
       defaultJobOptions: {

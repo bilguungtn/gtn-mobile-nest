@@ -274,3 +274,13 @@ model bill_tbl {
   user_id        String?
   user_tbl       old_user_tbl? @relation(fields: [user_id], references: [user_id])
 }
+
+// model user_history_tbl {
+//     user_history_id Int       @id @default(autoincrement()) @db.UnsignedInt
+//     zip_file_name   String?   @db.VarChar(100)
+//     data_table_name String?   @db.VarChar(50)
+//     target_dt       DateTime? @db.DateTime(0)
+//     create_dt       DateTime? @db.DateTime(0)
+//     delete_dt       DateTime? @db.DateTime(0)
+//     log_message     String?   @db.VarChar(1000)
+// }

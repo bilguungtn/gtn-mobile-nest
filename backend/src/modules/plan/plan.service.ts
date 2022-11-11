@@ -118,7 +118,6 @@ export class PlanService {
       });
       const { data } = csvParse;
       if (!data) throw new HttpException('bad request', 400);
-      // return data;
       await this.prismaService.plan_groups.deleteMany();
 
       for (const item of data) {
@@ -139,7 +138,7 @@ export class PlanService {
                 : parseFloat(item['capacity']),
             carrier_type_code: carrierTypeCode(item['carrier_type']),
           };
-          const test = await this.prismaService.plan_groups.upsert({
+          await this.prismaService.plan_groups.upsert({
             where: { id: +planGroupId },
             create: {
               id: +planGroupId,

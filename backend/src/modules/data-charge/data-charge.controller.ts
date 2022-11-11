@@ -8,19 +8,6 @@ export class DataChargeController {
   constructor(private readonly dataChargeService: DataChargeService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Get('/applydata')
-  async getAvailablePlan(@Req() req: IRequestWithUser): Promise<any> {
-    const { user } = req;
-    return await this.dataChargeService.applyDataCharge(
-      {
-        plan_id: '701201118',
-        data_charge_id: 1,
-      },
-      user,
-    );
-  }
-
-  @UseGuards(JwtAuthGuard)
   @Get('/data_charges')
   async getDataChargeList(
     @Req() req: IRequestWithUser,

@@ -25,5 +25,11 @@ export const configuration = () => {
       aws_region: process.env.AWS_SES_DEFAULT_REGION,
       aws_ses_secret_access_key: process.env.AWS_SES_SECRET_ACCESS_KEY,
     },
+    redis: {
+      url: process.env.REDIS_URL,
+      host: process.env.REDIS_HOST,
+      port: process.env.REDIS_PORT,
+      password: process.env.REDIS_PASSWORD,
+    },
   };
 };

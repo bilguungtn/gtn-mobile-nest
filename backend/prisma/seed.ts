@@ -51,7 +51,6 @@ async function seeder() {
     });
     console.log('Success => User seeder.');
 
-    await this.PlanService;
   } catch (error) {
     console.log('Error => User seeder : ', error);
   }

@@ -17,4 +17,6 @@ export const validationSchema = Joi.object({
   MAIL_FROM_ADDRESS: Joi.string().required(),
 
   REDIS_URL: Joi.string().required(),
+  REDIS_HOST: Joi.string().required(),
+  REDIS_PORT: Joi.string().required(),
 });
