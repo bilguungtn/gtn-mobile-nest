@@ -1,4 +1,4 @@
-version: "3.7"
+version: '3.7'
 
 services:
   nest-db:
@@ -8,10 +8,22 @@ services:
       MYSQL_DATABASE: mobile
       MYSQL_PASSWORD: root
       MYSQL_ROOT_PASSWORD: root
-      TZ: "Asia/Tokyo"
+      TZ: 'Asia/Tokyo'
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     ports:
       - 3306:3306
+
+  old-db:
+    image: mysql:latest
+    container_name: mobile-nest-old-db
+    environment:
+      MYSQL_DATABASE: mobile_old
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+      TZ: 'Asia/Tokyo'
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - 3307:3306
 
   phpmyadmin:
     container_name: mobile-nest-phpmyadmin
@@ -26,5 +38,19 @@ services:
     ports:
       - 8080:80
 
+  phpmyadmin_old:
+    container_name: mobile-nest-old-phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOSTS=mobile-nest-old-db
+      - PMA_USER=root
+      - PMA_PASSWORD=root
+    depends_on:
+      - old-db
+    ports:
+      - 8081:80
+
 volumes:
   nest-db:
+  old-db:

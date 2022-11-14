@@ -18,24 +18,24 @@ export class AuthService {
 
   async validateUser(payload: any): Promise<any> {
     const { id, password } = payload;
-    const user = await this.userService.getUser(id);
-    if (user && user.password === password) {
-      const { password, ...result } = user;
-      return result;
-    }
-    if (user) return user;
+    // const user = await this.userService.getUser(id);
+    // if (user && user.password === password) {
+    //   const { password, ...result } = user;
+    //   return result;
+    // }
+    // if (user) return user;
     return null;
   }
 
-  async login(loginRequestDto: LoginRequestDto) {
-    const user: UserResponseDto = await this.userService.login(loginRequestDto);
-    return {
-      user,
-      access_token: this.jwtService.sign(user),
-    };
+  async login(loginRequestDto: any) {
+    // const user: UserResponseDto = await this.userService.login(loginRequestDto);
+    // return {
+    //   user,
+    //   access_token: this.jwtService.sign(user),
+    // };
   }
 
-  async register(createUserRequest: CreateUserRequestDto) {
-    return await this.userService.register(createUserRequest);
-  }
+  // async register(createUserRequest: CreateUserRequestDto) {
+  //   return await this.userService.register(createUserRequest);
+  // }
 }

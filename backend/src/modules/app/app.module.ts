@@ -7,7 +7,7 @@ import { BullModule } from '@nestjs/bull';
 import { APP_GUARD } from '@nestjs/core';
 
 import { PrismaModule } from 'prisma/prisma.module';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService, PrismaServiceOld } from 'prisma/prisma.service';
 
 import { configuration } from 'config/configuration';
 import { validationSchema } from 'config/env.validation';
@@ -24,6 +24,7 @@ import { DataTrafficModule } from 'src/modules/data-traffic/data-traffic.module'
 import { LineModule } from 'src/modules/line/line.module';
 import { MailModule } from 'src/modules/mail/mail.module';
 import { UserService } from '../user/user.service';
+// import { PrismaClient as PrismaClient2 } from 'prisma/generated/client2';
 
 @Module({
   imports: [
@@ -64,7 +65,7 @@ import { UserService } from '../user/user.service';
     LineModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService, UserService],
+  providers: [AppService, PrismaService, PrismaServiceOld, UserService],
   exports: [],
 })
 export class AppModule {}

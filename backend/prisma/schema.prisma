@@ -109,7 +109,6 @@ model profiles {
   data_charge_histories data_charge_histories[]
   sims                  sims[]
   visas                 visas[]
-  user                  users?
 }
 
 model failed_jobs {
@@ -220,67 +219,3 @@ model visas {
   updated_at              DateTime? @default(now()) @updatedAt @db.Timestamp(0)
   profiles                profiles  @relation(fields: [profile_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "visas_profile_id_foreign")
 }
-
-model users {
-  id                Int       @id @default(autoincrement()) @db.UnsignedInt
-  name              String    @db.VarChar(255)
-  email             String    @unique(map: "users_email_unique") @db.VarChar(255)
-  email_verified_at DateTime? @db.Timestamp(0)
-  password          String    @db.VarChar(255)
-  remember_token    String?   @db.VarChar(100)
-  created_at        DateTime? @default(now()) @db.Timestamp(0)
-  updated_at        DateTime? @default(now()) @updatedAt @db.Timestamp(0)
-  profiles          profiles? @relation(fields: [email], references: [email])
-}
-
-model old_user_tbl {
-  user_record_id  Int        @id @default(autoincrement()) @db.UnsignedInt
-  user_id         String     @unique @db.VarChar(10)
-  sim_number      String?    @db.VarChar(11)
-  e_mail          String     @db.VarChar(256)
-  user_name       String?    @db.VarChar(255)
-  user_name_kana  String?    @db.VarChar(255)
-  zip_code        String?    @db.Char(7)
-  prefectures     String?    @db.VarChar(30)
-  address_1       String?    @db.VarChar(255)
-  address_2       String?    @db.VarChar(255)
-  address_3       String?    @db.VarChar(255)
-  address_4       String?    @db.VarChar(255)
-  address_5       String?    @db.VarChar(255)
-  phone           String?    @db.VarChar(11)
-  mobile_phone    String?    @db.VarChar(11)
-  billing_id      String?    @db.VarChar(12)
-  service_id      String?    @db.VarChar(10)
-  service_type    Int?
-  plan            String?    @db.VarChar(255)
-  plan_status     Int?       @db.UnsignedInt
-  signin_dt       DateTime?  @db.Date
-  cancel_dt       DateTime?  @db.Date
-  use_start_dt    DateTime?  @db.Date
-  use_end_dt      DateTime?  @db.Date
-  charge_start_dt DateTime?  @db.Date
-  charge_end_dt   DateTime?  @db.Date
-  bill_tbl        bill_tbl[]
-}
-
-model bill_tbl {
-  bill_record_id Int           @id @default(autoincrement()) @db.UnsignedInt
-  bill_id        String?       @db.VarChar(20)
-  target_name    String?       @db.VarChar(200)
-  month          Int?
-  item_name      String?       @db.VarChar(120)
-  price          Int?
-  bill_url       String?       @db.VarChar(1000)
-  user_id        String?
-  user_tbl       old_user_tbl? @relation(fields: [user_id], references: [user_id])
-}
-
-// model user_history_tbl {
-//     user_history_id Int       @id @default(autoincrement()) @db.UnsignedInt
-//     zip_file_name   String?   @db.VarChar(100)
-//     data_table_name String?   @db.VarChar(50)
-//     target_dt       DateTime? @db.DateTime(0)
-//     create_dt       DateTime? @db.DateTime(0)
-//     delete_dt       DateTime? @db.DateTime(0)
-//     log_message     String?   @db.VarChar(1000)
-// }

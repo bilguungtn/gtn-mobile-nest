@@ -1,0 +1,57 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table bill_tbl {
+  bill_record_id Int [pk, increment]
+  bill_id String
+  target_name String
+  month Int
+  item_name String
+  price Int
+  bill_url String
+  user_id String
+  user_tbl user_tbl
+}
+
+Table user_history_tbl {
+  user_history_id Int [pk, increment]
+  zip_file_name String
+  data_table_name String
+  target_dt DateTime
+  create_dt DateTime
+  delete_dt DateTime
+  log_message String
+}
+
+Table user_tbl {
+  user_record_id Int [pk, increment]
+  user_id String [unique, not null]
+  sim_number String
+  e_mail String [not null]
+  user_name String
+  user_name_kana String
+  zip_code String
+  prefectures String
+  address_1 String
+  address_2 String
+  address_3 String
+  address_4 String
+  address_5 String
+  phone String
+  mobile_phone String
+  billing_id String
+  service_id String
+  service_type Int
+  plan String
+  plan_status Int
+  signin_dt DateTime
+  cancel_dt DateTime
+  use_start_dt DateTime
+  use_end_dt DateTime
+  charge_start_dt DateTime
+  charge_end_dt DateTime
+  bill_tbl bill_tbl [not null]
+}
+
+Ref: bill_tbl.user_id > user_tbl.user_id

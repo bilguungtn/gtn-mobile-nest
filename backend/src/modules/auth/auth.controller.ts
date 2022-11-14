@@ -18,9 +18,7 @@ export class AuthController {
   @ApiBasicAuth()
   @ApiResponse({ description: 'Email return', type: LoginResponseDto })
   @Post('/login')
-  public async login(
-    @Body() payload: LoginRequestDto,
-  ): Promise<LoginResponseDto> {
+  public async login(@Body() payload: LoginRequestDto): Promise<any> {
     return this.authService.login(payload);
   }
 

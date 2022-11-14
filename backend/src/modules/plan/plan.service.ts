@@ -50,7 +50,7 @@ export class PlanService {
         select: {
           profiles: {
             select: {
-              user: { select: { created_at: true } },
+              // user: { select: { created_at: true } },
               name: true,
               name_kana: true,
               contact_phone_number: true,

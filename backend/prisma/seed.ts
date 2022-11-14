@@ -1,7 +1,9 @@
+// import { PrismaClient as PrismaClient1 } from '../prisma/generated/client1';
 import { PrismaClient } from '@prisma/client';
-import * as bcrypt from 'bcrypt';
+import { PrismaClient as PrismaClient2 } from '../prisma/generated/client2';
 
 const client = new PrismaClient();
+const client2 = new PrismaClient2();
 
 async function seeder() {
   try {
@@ -42,15 +44,14 @@ async function seeder() {
     });
     console.log('Success => profile seeder.');
 
-    await client.users.create({
+    await client2.user_tbl.create({
       data: {
-        name: 'ビルグウン',
-        email: 'test1@gmail.com',
-        password: await bcrypt.hash('Test1234', 10),
+        user_id: '123214',
+        user_name: 'ビルグウン',
+        e_mail: 'test1@gmail.com',
       },
     });
     console.log('Success => User seeder.');
-
   } catch (error) {
     console.log('Error => User seeder : ', error);
   }

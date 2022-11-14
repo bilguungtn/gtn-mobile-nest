@@ -106,7 +106,6 @@ Table profiles {
   data_charge_histories data_charge_histories [not null]
   sims sims [not null]
   visas visas [not null]
-  user users
 }
 
 Table failed_jobs {
@@ -205,60 +204,6 @@ Table visas {
   profiles profiles [not null]
 }
 
-Table users {
-  id Int [pk, increment]
-  name String [not null]
-  email String [unique, not null]
-  email_verified_at DateTime
-  password String [not null]
-  remember_token String
-  created_at DateTime [default: `now()`]
-  updated_at DateTime [default: `now()`]
-  profiles profiles
-}
-
-Table old_user_tbl {
-  user_record_id Int [pk, increment]
-  user_id String [unique, not null]
-  sim_number String
-  e_mail String [not null]
-  user_name String
-  user_name_kana String
-  zip_code String
-  prefectures String
-  address_1 String
-  address_2 String
-  address_3 String
-  address_4 String
-  address_5 String
-  phone String
-  mobile_phone String
-  billing_id String
-  service_id String
-  service_type Int
-  plan String
-  plan_status Int
-  signin_dt DateTime
-  cancel_dt DateTime
-  use_start_dt DateTime
-  use_end_dt DateTime
-  charge_start_dt DateTime
-  charge_end_dt DateTime
-  bill_tbl bill_tbl [not null]
-}
-
-Table bill_tbl {
-  bill_record_id Int [pk, increment]
-  bill_id String
-  target_name String
-  month Int
-  item_name String
-  price Int
-  bill_url String
-  user_id String
-  user_tbl old_user_tbl
-}
-
 Ref: addresses.profile_id > profiles.id [delete: Cascade]
 
 Ref: data_charges.plan_groups_id > plan_groups.id
@@ -276,7 +221,3 @@ Ref: plans.plan_group_id > plan_groups.id [delete: Cascade]
 Ref: sims.profile_id > profiles.id [delete: Cascade]
 
 Ref: visas.profile_id > profiles.id [delete: Cascade]
-
-Ref: users.email - profiles.email
-
-Ref: bill_tbl.user_id > old_user_tbl.user_id
