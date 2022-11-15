@@ -41,6 +41,7 @@
     "bull": "^4.10.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
+    "express-jwt": "^7.7.7",
     "express-openid-connect": "^2.9.0",
     "helmet": "^6.0.0",
     "joi": "^17.7.0",

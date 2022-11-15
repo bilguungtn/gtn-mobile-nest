@@ -10,7 +10,6 @@ import { SimsService } from 'src/modules/sims/sims.service';
 export class LineService {
   constructor(
     private readonly simsService: SimsService,
-    // private readonly profileService: ProfileService,
     private prismaService: PrismaService,
     @InjectQueue('mailing') private readonly mailingQueue: Queue,
   ) {}

@@ -18,7 +18,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { ProfileService } from 'src/modules/profile/profile.service';
 import { SuccessResponseDto } from 'src/common/responses/success-response.dto';
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { IRequestWithUser } from 'src/common/interfaces/request_with_user.interface';
 import {
   PasswordReqDto,
@@ -36,7 +35,6 @@ export class ProfileController {
    * @param {IRequestWithUser} req
    * @returns {any}
    */
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiResponse({ description: 'Profile', type: ProfileDto })
   @Get('/profile_info')
@@ -51,7 +49,6 @@ export class ProfileController {
    * @param {IRequestWithUser} req
    * @returns {SuccessResponseDto}
    */
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiResponse({
     status: 200,
@@ -73,7 +70,6 @@ export class ProfileController {
    * @param {IRequestWithUser} req
    * @returns {SuccessResponseDto}
    */
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiCreatedResponse({ description: 'Email return', type: LoginInfoDto })
   @Get('/login_info')
@@ -88,7 +84,6 @@ export class ProfileController {
    * @param {IRequestWithUser} req
    * @returns {SuccessResponseDto}
    */
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiResponse({ status: 200, description: 'EMAIL_UPDATED' })
   @ApiResponse({ status: 201, description: 'VERIFICATION_EMAIL_SENT' })
@@ -109,7 +104,6 @@ export class ProfileController {
    * @param {IRequestWithUser} req
    * @returns {SuccessResponseDto}
    */
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiResponse({ status: 200, description: 'Changed' })
   @Patch('/password')
