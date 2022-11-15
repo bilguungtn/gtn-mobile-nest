@@ -1,9 +1,9 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { PrismaClient as PrismaClient2 } from '@prisma/client-2';
-import { PrismaClient } from '@prisma/client';
 import { PrismaClientInitializationError } from '@prisma/client/runtime';
-import { CommonException } from '../src/common/exceptions/common.exception';
-import { NotConnectedDBException } from './exceptions/not-connected-db.exception';
+import { PrismaClient } from '@prisma/client';
+import { CommonException } from 'src/common/exceptions/common.exception';
+import { NotConnectedDBException } from 'prisma/exceptions/not-connected-db.exception';
 
 @Injectable()
 export class PrismaService

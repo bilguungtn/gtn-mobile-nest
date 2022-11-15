@@ -1,6 +1,5 @@
-// import { PrismaClient as PrismaClient1 } from '../prisma/generated/client1';
 import { PrismaClient } from '@prisma/client';
-import { PrismaClient as PrismaClient2 } from '../prisma/generated/client2';
+import { PrismaClient as PrismaClient2 } from '@prisma/client-2';
 
 const client = new PrismaClient();
 const client2 = new PrismaClient2();

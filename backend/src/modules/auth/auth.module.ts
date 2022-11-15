@@ -6,7 +6,6 @@ import { PrismaService } from 'prisma/prisma.service';
 import { JwtStrategy } from 'src/modules/auth/strategies/jwt.strategy';
 import { UserModule } from 'src/modules/user/user.module';
 import { UserService } from 'src/modules/user/user.service';
-import { BasicStrategy } from 'src/modules/auth/strategies/basic-auth.strategy';
 import { ProfileService } from 'src/modules/profile/profile.service';
 import { JwtModule } from '@nestjs/jwt';
 
@@ -26,13 +25,7 @@ import { JwtModule } from '@nestjs/jwt';
       inject: [ConfigService],
     }),
   ],
-  providers: [
-    PrismaService,
-    BasicStrategy,
-    JwtStrategy,
-    UserService,
-    ProfileService,
-  ],
+  providers: [PrismaService, JwtStrategy, UserService, ProfileService],
   exports: [PassportModule],
 })
 export class AuthModule {}

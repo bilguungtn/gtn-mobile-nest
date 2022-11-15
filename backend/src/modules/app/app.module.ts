@@ -24,7 +24,6 @@ import { DataTrafficModule } from 'src/modules/data-traffic/data-traffic.module'
 import { LineModule } from 'src/modules/line/line.module';
 import { MailModule } from 'src/modules/mail/mail.module';
 import { UserService } from '../user/user.service';
-// import { PrismaClient as PrismaClient2 } from 'prisma/generated/client2';
 
 @Module({
   imports: [
@@ -39,7 +38,7 @@ import { UserService } from '../user/user.service';
     DataTrafficModule,
     MailModule,
     ConfigModule.forRoot({
-      envFilePath: `${process.cwd()}/.env`,
+      envFilePath: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
       load: [configuration],
       isGlobal: true,
       validationSchema,
