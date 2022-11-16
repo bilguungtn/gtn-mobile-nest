@@ -23,7 +23,8 @@ import { DataChargeModule } from 'src/modules/data-charge/data-charge.module';
 import { DataTrafficModule } from 'src/modules/data-traffic/data-traffic.module';
 import { LineModule } from 'src/modules/line/line.module';
 import { MailModule } from 'src/modules/mail/mail.module';
-import { UserService } from '../user/user.service';
+import { UserService } from 'src/modules/user/user.service';
+import { TaskModule } from 'src/modules/task/task.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { UserService } from '../user/user.service';
     DataChargeModule,
     DataTrafficModule,
     MailModule,
+    TaskModule,
     ConfigModule.forRoot({
       envFilePath: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
       load: [configuration],

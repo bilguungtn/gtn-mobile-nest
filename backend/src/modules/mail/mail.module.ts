@@ -6,7 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import aws, { SES } from 'aws-sdk';
 import { join } from 'path';
 
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService, PrismaServiceOld } from 'prisma/prisma.service';
 import { MailingConsumer } from 'src/modules/mail/mail.processor';
 import { MailService } from 'src/modules/mail/mail.service';
 import { UserService } from 'src/modules/user/user.service';
@@ -61,6 +61,7 @@ import { ProfileService } from 'src/modules/profile/profile.service';
     MailService,
     MailingConsumer,
     PrismaService,
+    PrismaServiceOld,
     UserService,
     LineService,
     SimsService,

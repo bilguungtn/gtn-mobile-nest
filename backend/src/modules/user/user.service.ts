@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService, PrismaServiceOld } from 'prisma/prisma.service';
 import { UnauthorizedUserException } from 'src/common/exceptions/unauthorized.exception';
 import { comparePasswords } from 'src/common/helpers/compare-password.helper';
 import { UserResponseDto } from 'src/modules/user/dto/responses/user.dto';
@@ -13,7 +13,23 @@ import { parse } from 'papaparse';
 
 @Injectable()
 export class UserService {
-  // constructor(private prismaService: PrismaClient2) {}
+  constructor(private prismaService: PrismaServiceOld) {}
+  /**
+   * Get user by payload.
+   * @param {any} param0 sub
+   * @returns {UserResponseDto}
+   */
+  async findByPayload({ sub }: any): Promise<any> {
+    try {
+      const _user = await this.prismaService.user_tbl.findUnique({
+        where: { user_id: sub },
+      });
+      return _user;
+      // return toUserResponseDto(_user);
+    } catch (error) {
+      throw new CommonException(error);
+    }
+  }
 
   // /**
   //  * getUser.
