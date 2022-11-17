@@ -11,7 +11,7 @@ import { ApiBearerAuth, ApiHeader } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { IRequestWithUser } from 'src/common/interfaces/request_with_user.interface';
-import { PlanGroupDto } from './dto/response/plan.dto';
+import { CurrentPlanResponseDto, PlanGroupResponseDto } from './dto/response/plan.dto';
 import { PlanService } from './plan.service';
 
 @Controller()
@@ -28,7 +28,7 @@ export class PlanController {
   @Get('/available_plan')
   async getAvailablePlan(
     @Headers('X-Phone-Number') phoneNumber: string,
-  ): Promise<PlanGroupDto> {
+  ): Promise<PlanGroupResponseDto> {
     return await this.planService.getAvailablePlan(phoneNumber);
   }
 
@@ -43,7 +43,7 @@ export class PlanController {
   async getCurrentPlan(
     @Req() req: IRequestWithUser,
     @Headers('X-Phone-Number') phoneNumber: string,
-  ): Promise<any> {
+  ): Promise<CurrentPlanResponseDto> {
     const { user } = req;
     return await this.planService.getCurrentPlan({
       gtnId: user.gtn_id,

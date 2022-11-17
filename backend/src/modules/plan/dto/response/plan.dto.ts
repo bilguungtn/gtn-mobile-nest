@@ -1,16 +1,53 @@
-import { ApiProperty } from '@nestjs/swagger';
-
-export class PlanGroupDto {
+export class PlanGroupResponseDto {
   data: [
     {
-      plans: TestDto[];
+      plans: [
+        {
+          id: number;
+          deadline_day: string;
+          deadline_time: string;
+        },
+      ];
     },
   ];
 }
 
-export class TestDto {
-  // @ApiProperty({ description: 'plan groud id', example: '1111' })
+export class PlanDto {
   id: number;
-  deadline_day: string;
-  deadline_time: string;
+  name: string;
+  happiness_name: string;
+  plan_group_id: number;
+  capacity?: number;
+  carrier_type_code: number;
+  price?: number;
+}
+
+export class CurrentPlanResponseDto {
+  data: [
+    {
+      profile: {
+        data: {
+          user_name: string;
+          user_name_kana: string;
+          contract_phone_number: string;
+          cell_phone_number: string;
+          email: string;
+          zip_code: string;
+          address: string;
+        };
+      };
+    },
+    {
+      main_plan: {
+        data: {
+          id: string;
+          sim_number: string;
+          plan_name: string;
+          contract_start_date: Date;
+          capacity: number;
+          plan: number;
+        };
+      };
+    },
+  ];
 }

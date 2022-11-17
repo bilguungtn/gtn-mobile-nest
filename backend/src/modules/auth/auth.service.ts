@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { UnauthorizedUserException } from 'src/common/exceptions/unauthorized.exception';
-import { UserService } from 'src/modules/user/user.service';
 import { JwtPayloadDto } from './dto/payload.dto';
 import { TokenResponseDto } from './dto/response/tokenResponse.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userService: UserService) {}
   /**
    * Validate user.
    * @param {JwtPayloadDto} payload

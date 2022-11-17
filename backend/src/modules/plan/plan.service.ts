@@ -3,7 +3,10 @@ import { PrismaService, PrismaServiceOld } from 'prisma/prisma.service';
 import { SuccessResponseDto } from 'src/common/responses/success-response.dto';
 import { readFileSync } from 'fs';
 import { parse } from 'papaparse';
-import { PlanGroupDto } from 'src/modules/plan/dto/response/plan.dto';
+import {
+  CurrentPlanResponseDto,
+  PlanGroupResponseDto,
+} from 'src/modules/plan/dto/response/plan.dto';
 import {
   toCurrentPlanDto,
   toPlanGroupDto,
@@ -27,7 +30,9 @@ export class PlanService {
   ) {}
 
   // TODO: database connection might change
-  public async getAvailablePlan(phoneNumber: string): Promise<PlanGroupDto> {
+  public async getAvailablePlan(
+    phoneNumber: string,
+  ): Promise<PlanGroupResponseDto> {
     try {
       const sim = await this.prismaService.sims.findFirst({
         where: { sim_number: phoneNumber },
@@ -52,7 +57,10 @@ export class PlanService {
   }
 
   // TODO: check
-  public async getCurrentPlan({ gtnId, phoneNumber }): Promise<any> {
+  public async getCurrentPlan({
+    gtnId,
+    phoneNumber,
+  }): Promise<CurrentPlanResponseDto> {
     try {
       const sim = await this.simService.findBySimNumberAndProfileId(
         gtnId,
@@ -61,7 +69,7 @@ export class PlanService {
       if (!sim) {
         throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
       }
-      const profile = await this.prismaServiceOld.user_tbl.findFirst({
+      const oldUser = await this.prismaServiceOld.user_tbl.findFirst({
         where: {
           use_end_dt: new Date('9999-12-31') || {
             gte: firstDayOfPrevMonth(),
@@ -74,18 +82,18 @@ export class PlanService {
           use_end_dt: 'desc',
         },
       });
-      if (!profile) {
+      if (!oldUser) {
         throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
       }
       const plan = await this.prismaService.plans.findFirst({
-        where: { id: +profile.service_id },
+        where: { id: +oldUser.service_id },
       });
       if (!plan) {
         throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
       }
 
       // dto
-      return toCurrentPlanDto(profile, plan);
+      return toCurrentPlanDto(oldUser, plan);
     } catch (err) {
       throw err;
     }

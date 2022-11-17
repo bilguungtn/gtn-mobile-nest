@@ -1,11 +1,16 @@
-import { PlanGroupDto } from 'src/modules/plan/dto/response/plan.dto';
+import { OldUserResponseDto } from 'src/common/dto/response/old_user.dto';
+import {
+  CurrentPlanResponseDto,
+  PlanDto,
+  PlanGroupResponseDto,
+} from 'src/modules/plan/dto/response/plan.dto';
 
 /**
  * Mapper => To UserDetailsResponseDto from user.
  * @param data user data.
- * @returns {PlanGroupDto} UserDetailsResponseDto.
+ * @returns {PlanGroupResponseDto} UserDetailsResponseDto.
  */
-export const toPlanGroupDto = (plan_groups): Promise<any> => {
+export const toPlanGroupDto = (plan_groups): Promise<PlanGroupResponseDto> => {
   const dto: any = {
     data: [
       {
@@ -22,35 +27,38 @@ export const toPlanGroupDto = (plan_groups): Promise<any> => {
   return dto;
 };
 
-export const toCurrentPlanDto = (profile, plan): Promise<any> => {
+export const toCurrentPlanDto = (
+  oldUser: OldUserResponseDto,
+  plan: PlanDto,
+): Promise<CurrentPlanResponseDto> => {
   const dto: any = {
     data: [
       {
         profile: {
           data: {
-            user_name: profile.user_name,
-            user_name_kana: profile.user_name_kana,
-            contract_phone_number: profile.phone,
-            cell_phone_number: profile.mobile_phone,
-            email: profile.e_mail,
-            zip_code: profile.zip_code,
+            user_name: oldUser?.user_name,
+            user_name_kana: oldUser?.user_name_kana,
+            contract_phone_number: oldUser?.phone,
+            cell_phone_number: oldUser?.mobile_phone,
+            email: oldUser?.e_mail,
+            zip_code: oldUser?.zip_code,
             address:
-              profile.prefectures +
-              profile.address_1 +
-              profile.address_2 +
-              profile.address_3 +
-              profile.address_4 +
-              profile.address_5,
+              oldUser?.prefectures +
+              oldUser?.address_1 +
+              oldUser?.address_2 +
+              oldUser?.address_3 +
+              oldUser?.address_4 +
+              oldUser?.address_5,
           },
         },
         main_plan: {
           data: {
-            id: profile.service_id,
-            sim_number: profile.sim_number,
-            plan_name: profile.plan,
-            contract_start_date: profile.use_start_dt,
-            capacity: plan.capacity,
-            plan: plan.price,
+            id: oldUser?.service_id,
+            sim_number: oldUser?.sim_number,
+            plan_name: oldUser?.plan,
+            contract_start_date: oldUser?.use_start_dt,
+            capacity: plan?.capacity,
+            plan: plan?.price,
           },
         },
       },

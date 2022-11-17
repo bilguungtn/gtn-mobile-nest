@@ -21,6 +21,7 @@ export class TaskService {
 
     console.log('===>', tableName);
 
+    // TODO: remove old tables
     await this.prismaServiceOld.$queryRawUnsafe(
       `CREATE TABLE ${tableName}( user_record_id int UNSIGNED NOT NULL PRIMARY KEY,
       user_id varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL UNIQUE KEY,
