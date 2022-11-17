@@ -25,6 +25,7 @@ import {
 } from 'src/modules/profile/dto/requests/profile.dto';
 import { LoginInfoDto } from 'src/modules/profile/dto/login_info.dto';
 import { ProfileDto } from './dto/response/profile.dto';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 
 @Controller()
 export class ProfileController {
@@ -33,12 +34,13 @@ export class ProfileController {
   /**
    * Get profile by id.
    * @param {IRequestWithUser} req
-   * @returns {any}
+   * @returns {ProfileDto}
    */
   @ApiBearerAuth('JWT-auth')
   @ApiResponse({ description: 'Profile', type: ProfileDto })
+  @UseGuards(JwtAuthGuard)
   @Get('/profile_info')
-  async getProfile(@Req() req: IRequestWithUser) {
+  async getProfile(@Req() req: IRequestWithUser): Promise<ProfileDto> {
     const { user } = req;
     return await this.profileService.getProfile(user.gtn_id);
   }
@@ -55,6 +57,7 @@ export class ProfileController {
     description: 'Profile updated',
     type: SuccessResponseDto,
   })
+  @UseGuards(JwtAuthGuard)
   @Patch('/profile_info')
   async updateProfile(
     @Body() data: ProfileReqDto,
@@ -72,6 +75,7 @@ export class ProfileController {
    */
   @ApiBearerAuth('JWT-auth')
   @ApiCreatedResponse({ description: 'Email return', type: LoginInfoDto })
+  @UseGuards(JwtAuthGuard)
   @Get('/login_info')
   async loginInfo(@Req() req: IRequestWithUser): Promise<LoginInfoDto> {
     const { user } = req;

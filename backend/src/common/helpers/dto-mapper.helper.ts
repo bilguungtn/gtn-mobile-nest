@@ -24,9 +24,9 @@ export const toProfileResponseDto = (data: any): ProfileDto => {
 };
 
 /**
- * Mapper => To UserDetailsResponseDto from user.
- * @param data user data.
- * @returns {any} UserDetailsResponseDto.
+ * Mapper => To toLoginInfoDto.
+ * @param login_info login_info data.
+ * @returns {any} email login info.
  */
 export const toLoginInfoDto = (login_info: LoginInfoDto): any => {
   const dto = {

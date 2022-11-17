@@ -23,11 +23,16 @@ import { LoginInfoDto } from 'src/modules/profile/dto/login_info.dto';
 export class ProfileService {
   constructor(private prismaService: PrismaService) {}
 
-  public async getProfile(gtn_id: any): Promise<ProfileDto> {
+  public async getProfile(gtn_id: number): Promise<ProfileDto> {
     const profile = await this.prismaService.profiles.findFirst({
       where: { id: +gtn_id },
       include: {
-        addresses: true,
+        addresses: {
+          select: {
+            address: true,
+            postal_code: true,
+          },
+        },
         sims: true,
         visas: true,
       },
@@ -35,9 +40,9 @@ export class ProfileService {
     return toProfileResponseDto(profile);
   }
 
-  public async loginInfo(id: number): Promise<any> {
+  public async loginInfo(gtn_id: number): Promise<LoginInfoDto> {
     const login_info = await this.prismaService.profiles.findUnique({
-      where: { id },
+      where: { id: +gtn_id },
       select: { email: true },
     });
 

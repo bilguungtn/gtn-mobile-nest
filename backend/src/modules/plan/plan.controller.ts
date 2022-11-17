@@ -41,9 +41,14 @@ export class PlanController {
   })
   @Get('/current_plan')
   async getCurrentPlan(
+    @Req() req: IRequestWithUser,
     @Headers('X-Phone-Number') phoneNumber: string,
   ): Promise<any> {
-    return await this.planService.getCurrentPlan(phoneNumber);
+    const { user } = req;
+    return await this.planService.getCurrentPlan({
+      gtnId: user.gtn_id,
+      phoneNumber,
+    });
   }
 
   // /**

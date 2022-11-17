@@ -13,3 +13,15 @@ export const dateFormat = (date: Date): string => {
     ('0' + date.getSeconds()).slice(-2);
   return formatedDate;
 };
+
+/**
+ * fisrt day of last month
+ * @returns {Date}
+ */
+export const firstDayOfPrevMonth = () => {
+  const now = new Date();
+  var date = new Date(now);
+  date.setDate(1);
+  date.setMonth(date.getMonth() - 1);
+  return date;
+};

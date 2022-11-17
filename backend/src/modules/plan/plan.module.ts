@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService, PrismaServiceOld } from 'prisma/prisma.service';
 import { PlanController } from 'src/modules/plan/plan.controller';
 import { PlanService } from 'src/modules/plan/plan.service';
 import { DataChargeService } from 'src/modules/data-charge/data-charge.service';
@@ -10,6 +10,7 @@ import { SimsService } from '../sims/sims.service';
   controllers: [PlanController],
   providers: [
     PrismaService,
+    PrismaServiceOld,
     DataChargeService,
     ProfileService,
     PlanService,

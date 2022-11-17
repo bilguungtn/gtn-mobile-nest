@@ -1,10 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService, PrismaServiceOld } from 'prisma/prisma.service';
 import { SuccessResponseDto } from 'src/common/responses/success-response.dto';
 import { readFileSync } from 'fs';
 import { parse } from 'papaparse';
 import { PlanGroupDto } from 'src/modules/plan/dto/response/plan.dto';
-import { toPlanGroupDto } from 'src/modules/plan/dto/dto-mapper.helper';
+import {
+  toCurrentPlanDto,
+  toPlanGroupDto,
+} from 'src/modules/plan/dto/dto-mapper.helper';
 import {
   carrierTypeCode,
   deadlineFormat,
@@ -12,10 +15,16 @@ import {
   formatCapacity,
   formatPrice,
 } from 'src/common/helpers/csv.helper';
+import { SimsService } from '../sims/sims.service';
+import { firstDayOfPrevMonth } from 'src/common/helpers/date.helper';
 
 @Injectable()
 export class PlanService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+    private prismaServiceOld: PrismaServiceOld,
+    private readonly simService: SimsService,
+  ) {}
 
   // TODO: database connection might change
   public async getAvailablePlan(phoneNumber: string): Promise<PlanGroupDto> {
@@ -43,41 +52,45 @@ export class PlanService {
   }
 
   // TODO: check
-  public async getCurrentPlan(phoneNumber: string): Promise<any> {
+  public async getCurrentPlan({ gtnId, phoneNumber }): Promise<any> {
     try {
-      const profile = await this.prismaService.sims.findFirst({
-        where: { sim_number: phoneNumber },
-        select: {
-          profiles: {
-            select: {
-              // user: { select: { created_at: true } },
-              name: true,
-              name_kana: true,
-              contact_phone_number: true,
-              cell_phone_number: true,
-              email: true,
-              addresses: {
-                select: {
-                  postal_code: true,
-                  address: true,
-                },
-              },
-            },
+      const sim = await this.simService.findBySimNumberAndProfileId(
+        gtnId,
+        phoneNumber,
+      );
+      if (!sim) {
+        throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
+      }
+      const profile = await this.prismaServiceOld.user_tbl.findFirst({
+        where: {
+          use_end_dt: new Date('9999-12-31') || {
+            gte: firstDayOfPrevMonth(),
           },
-          happiness_id: true,
+          sim_number: '!=',
+          user_id: sim.happiness_id,
+          service_type: 1,
+        },
+        orderBy: {
+          use_end_dt: 'desc',
         },
       });
-      const mainPlanId = this.prismaService.plans.findFirst({
-        where: { id: +profile.happiness_id },
-        select: { id: true, name: true, capacity: true },
+      if (!profile) {
+        throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
+      }
+      const plan = await this.prismaService.plans.findFirst({
+        where: { id: +profile.service_id },
       });
-      return profile;
+      if (!plan) {
+        throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
+      }
+
+      // dto
+      return toCurrentPlanDto(profile, plan);
     } catch (err) {
       throw err;
     }
   }
 
-  // TODO: might delete
   public async getMainPlanIdByUserId(id: number): Promise<number> {
     try {
       const sim = await this.prismaService.sims.findFirst({

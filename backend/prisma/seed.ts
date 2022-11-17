@@ -8,12 +8,13 @@ async function seeder() {
   try {
     await client.profiles.create({
       data: {
+        id: 123456,
         name: 'bilguun',
         name_kana: 'bilguun_kana',
         birthday: new Date('1999-12-26'),
         contact_phone_number: '0123456789',
         cell_phone_number: '123435',
-        email: 'test1@gmail.com',
+        email: 'test2@gmail.com',
         addresses: {
           createMany: {
             data: [
@@ -31,7 +32,7 @@ async function seeder() {
         sims: {
           create: {
             sim_number: '123123',
-            happiness_id: '213123121',
+            happiness_id: '213123122',
           },
         },
         visas: {
