@@ -1,16 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaService, PrismaServiceOld } from 'prisma/prisma.service';
-import { SuccessResponseDto } from 'src/common/responses/success-response.dto';
 import { readFileSync } from 'fs';
 import { parse } from 'papaparse';
-import {
-  CurrentPlanResponseDto,
-  PlanGroupResponseDto,
-} from 'src/modules/plan/dto/response/plan.dto';
-import {
-  toCurrentPlanDto,
-  toPlanGroupDto,
-} from 'src/modules/plan/dto/dto-mapper.helper';
+import { PrismaService } from 'prisma/prisma.service';
+import { SuccessResponseDto } from 'src/common/responses/success-response.dto';
 import {
   carrierTypeCode,
   deadlineFormat,
@@ -18,45 +10,69 @@ import {
   formatCapacity,
   formatPrice,
 } from 'src/common/helpers/csv.helper';
-import { SimsService } from '../sims/sims.service';
-import { firstDayOfPrevMonth } from 'src/common/helpers/date.helper';
+import {
+  AvailablePlanResponseDto,
+  CurrentPlanResponseDto,
+} from 'src/modules/plan/dto/response/plan.dto';
+import {
+  toAvailablePlanDto,
+  toCurrentPlanDto,
+} from 'src/modules/plan/dto/dto-mapper.helper';
+import { SimsService } from 'src/modules/sims/sims.service';
+import { UserService } from 'src/modules/user/user.service';
 
 @Injectable()
 export class PlanService {
   constructor(
     private prismaService: PrismaService,
-    private prismaServiceOld: PrismaServiceOld,
+    private readonly userService: UserService,
     private readonly simService: SimsService,
   ) {}
 
   // TODO: database connection might change
-  public async getAvailablePlan(
-    phoneNumber: string,
-  ): Promise<PlanGroupResponseDto> {
+  public async getAvailableChangePlans({
+    gtnId,
+    phoneNumber,
+  }): Promise<AvailablePlanResponseDto[]> {
     try {
-      const sim = await this.prismaService.sims.findFirst({
-        where: { sim_number: phoneNumber },
-        select: { happiness_id: true },
-      });
-
-      if (!sim.happiness_id) {
+      const planList = [];
+      const sim = await this.simService.findBySimNumberAndProfileId(
+        gtnId,
+        phoneNumber,
+      );
+      if (!sim) {
         throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
       }
-      const available_plan_groups = await this.prismaService.plans.findMany({
-        where: {
-          id: +sim.happiness_id,
-        },
-        select: {
-          plan_groups: true,
-        },
+      const mainId = await this.getMainPlanIdByUserId(sim.happiness_id);
+
+      const current_plan = await this.prismaService.plans.findFirst({
+        where: { id: +mainId },
       });
-      return toPlanGroupDto(available_plan_groups);
+
+      const availableChangePlanGroupIds =
+        await this.prismaService.plan_groups_relations.findMany({
+          where: {
+            current_plan_group_id: current_plan.plan_group_id,
+          },
+        });
+
+      for (const availablePlanGroup of availableChangePlanGroupIds) {
+        const plans = await this.prismaService.plans.findMany({
+          where: {
+            NOT: { plan_group_id: current_plan.plan_group_id },
+            plan_group_id: availablePlanGroup.available_change_plan_group_id,
+          },
+        });
+        if (plans.length)
+          plans.map((plan) => planList.push(toAvailablePlanDto(plan)));
+      }
+
+      return planList;
     } catch (err) {
       throw err;
     }
   }
 
-  // TODO: check
   public async getCurrentPlan({
     gtnId,
     phoneNumber,
@@ -67,54 +83,26 @@ export class PlanService {
         phoneNumber,
       );
       if (!sim) {
-        throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
+        throw new HttpException('Sim not found', HttpStatus.NOT_FOUND);
       }
-      const oldUser = await this.prismaServiceOld.user_tbl.findFirst({
-        where: {
-          use_end_dt: new Date('9999-12-31') || {
-            gte: firstDayOfPrevMonth(),
-          },
-          sim_number: '!=',
-          user_id: sim.happiness_id,
-          service_type: 1,
-        },
-        orderBy: {
-          use_end_dt: 'desc',
-        },
-      });
-      if (!oldUser) {
-        throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
-      }
+      const activeUser = await this.userService.getValidUser(sim.happiness_id);
       const plan = await this.prismaService.plans.findFirst({
-        where: { id: +oldUser.service_id },
+        where: { id: +activeUser.service_id },
       });
       if (!plan) {
         throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
       }
-
-      // dto
-      return toCurrentPlanDto(oldUser, plan);
+      return toCurrentPlanDto(activeUser, plan);
     } catch (err) {
       throw err;
     }
   }
 
-  public async getMainPlanIdByUserId(id: number): Promise<number> {
+  public async getMainPlanIdByUserId(id: string): Promise<string> {
     try {
-      const sim = await this.prismaService.sims.findFirst({
-        where: {
-          profile_id: +id,
-        },
-      });
-      if (!sim.happiness_id) throw new HttpException('error', 400);
-      const plan_id = await this.prismaService.plans.findUnique({
-        where: { id: +sim.happiness_id },
-        select: {
-          id: true,
-        },
-      });
-      if (!plan_id) throw new HttpException('plan not found', 400);
-      return plan_id.id;
+      const user = await this.userService.getValidUser(id);
+      if (!user) throw new HttpException('plan not found', 400);
+      return user.service_id;
     } catch (error) {
       throw new HttpException(error, 400);
     }

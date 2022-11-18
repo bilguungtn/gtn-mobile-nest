@@ -14,9 +14,9 @@ export class DataChargeController {
     @Headers('X-Phone-Number') phoneNumber: string,
   ): Promise<any> {
     const { user } = req;
-    return await this.dataChargeService.getDataChargeList(
-      user.gtn_id,
-      phoneNumber,
-    );
+    // return await this.dataChargeService.getDataChargeList(
+    //   user.gtn_id,
+    //   phoneNumber,
+    // );
   }
 }

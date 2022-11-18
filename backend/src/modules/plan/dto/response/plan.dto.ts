@@ -36,8 +36,6 @@ export class CurrentPlanResponseDto {
           address: string;
         };
       };
-    },
-    {
       main_plan: {
         data: {
           id: string;
@@ -50,4 +48,10 @@ export class CurrentPlanResponseDto {
       };
     },
   ];
+}
+
+export class AvailablePlanResponseDto {
+  id: number;
+  plan_name: string;
+  plan_group_id: number;
 }

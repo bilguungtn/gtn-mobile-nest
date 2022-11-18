@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Headers,
+  Patch,
   Req,
   UseGuards,
   UseInterceptors,
@@ -11,7 +12,11 @@ import { ApiBearerAuth, ApiHeader } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { IRequestWithUser } from 'src/common/interfaces/request_with_user.interface';
-import { CurrentPlanResponseDto, PlanGroupResponseDto } from './dto/response/plan.dto';
+import {
+  AvailablePlanResponseDto,
+  CurrentPlanResponseDto,
+  PlanGroupResponseDto,
+} from './dto/response/plan.dto';
 import { PlanService } from './plan.service';
 
 @Controller()
@@ -27,9 +32,14 @@ export class PlanController {
   })
   @Get('/available_plan')
   async getAvailablePlan(
+    @Req() req: IRequestWithUser,
     @Headers('X-Phone-Number') phoneNumber: string,
-  ): Promise<PlanGroupResponseDto> {
-    return await this.planService.getAvailablePlan(phoneNumber);
+  ): Promise<AvailablePlanResponseDto[]> {
+    const { user } = req;
+    return await this.planService.getAvailableChangePlans({
+      gtnId: user.gtn_id,
+      phoneNumber,
+    });
   }
 
   @UseGuards(JwtAuthGuard)

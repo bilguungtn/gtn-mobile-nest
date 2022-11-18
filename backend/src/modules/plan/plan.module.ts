@@ -5,6 +5,7 @@ import { PlanService } from 'src/modules/plan/plan.service';
 import { DataChargeService } from 'src/modules/data-charge/data-charge.service';
 import { ProfileService } from 'src/modules/profile/profile.service';
 import { SimsService } from '../sims/sims.service';
+import { UserService } from '../user/user.service';
 
 @Module({
   controllers: [PlanController],
@@ -15,6 +16,7 @@ import { SimsService } from '../sims/sims.service';
     ProfileService,
     PlanService,
     SimsService,
+    UserService,
   ],
 })
 export class PlanModule {}

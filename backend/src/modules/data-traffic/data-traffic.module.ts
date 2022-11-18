@@ -5,6 +5,7 @@ import { PlanService } from 'src/modules/plan/plan.service';
 import { PrismaService, PrismaServiceOld } from 'prisma/prisma.service';
 import { ProfileService } from 'src/modules/profile/profile.service';
 import { SimsService } from 'src/modules/sims/sims.service';
+import { UserService } from '../user/user.service';
 
 @Module({
   providers: [
@@ -14,6 +15,7 @@ import { SimsService } from 'src/modules/sims/sims.service';
     PlanService,
     PrismaServiceOld,
     SimsService,
+    UserService,
   ],
   controllers: [DataTrafficController],
 })

@@ -1,17 +1,18 @@
-import { OldUserResponseDto } from 'src/common/dto/response/old_user.dto';
 import {
+  AvailablePlanResponseDto,
   CurrentPlanResponseDto,
   PlanDto,
   PlanGroupResponseDto,
 } from 'src/modules/plan/dto/response/plan.dto';
+import { UserResponseDto } from 'src/modules/user/dto/responses/user.dto';
 
 /**
  * Mapper => To UserDetailsResponseDto from user.
  * @param data user data.
  * @returns {PlanGroupResponseDto} UserDetailsResponseDto.
  */
-export const toPlanGroupDto = (plan_groups): Promise<PlanGroupResponseDto> => {
-  const dto: any = {
+export const toPlanGroupDto = (plan_groups) => {
+  const dto: PlanGroupResponseDto = {
     data: [
       {
         plans: plan_groups.map((data) => {
@@ -27,11 +28,8 @@ export const toPlanGroupDto = (plan_groups): Promise<PlanGroupResponseDto> => {
   return dto;
 };
 
-export const toCurrentPlanDto = (
-  oldUser: OldUserResponseDto,
-  plan: PlanDto,
-): Promise<CurrentPlanResponseDto> => {
-  const dto: any = {
+export const toCurrentPlanDto = (oldUser: UserResponseDto, plan: PlanDto) => {
+  const dto: CurrentPlanResponseDto = {
     data: [
       {
         profile: {
@@ -65,4 +63,13 @@ export const toCurrentPlanDto = (
     ],
   };
   return dto;
+};
+
+export const toAvailablePlanDto = (data: PlanDto) => {
+  const plan: AvailablePlanResponseDto = {
+    id: data.id,
+    plan_name: data.name,
+    plan_group_id: data.plan_group_id,
+  };
+  return plan;
 };

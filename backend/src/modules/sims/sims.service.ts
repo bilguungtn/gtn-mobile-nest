@@ -10,13 +10,13 @@ export class SimsService {
   public async findBySimNumberAndProfileId(
     id: number,
     simNumber: string,
-  ): Promise<any> {
+  ): Promise<SimResponseDto> {
     const sim_profile = await this.getSims(id);
     const profile = sim_profile.find((sim) => sim.sim_number === simNumber);
     return profile || null;
   }
 
-  public async getSims(id: number): Promise<any> {
+  public async getSims(id: number): Promise<SimResponseDto[]> {
     const eloquentSims: SimsFullDto[] = await this.prismaService
       .$queryRaw`SELECT * FROM sims where LAST_DAY(DATE_ADD(sims.canceled_at, INTERVAL 1 MONTH)) >= NOW() && profile_id=${id} ORDER BY sims.created_at DESC`;
     return eloquentSims.map((item) => toSimsDto(item));
