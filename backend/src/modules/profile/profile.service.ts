@@ -18,12 +18,16 @@ import {
   ProfileReqDto,
 } from 'src/modules/profile/dto/requests/profile.dto';
 import { LoginInfoDto } from 'src/modules/profile/dto/login_info.dto';
+import { SimsService } from '../sims/sims.service';
 
 @Injectable()
 export class ProfileService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+    private readonly simService: SimsService,
+  ) {}
 
-  public async getProfile(gtn_id: number): Promise<ProfileDto> {
+  public async getProfile(gtn_id: number): Promise<any> {
     const profile = await this.prismaService.profiles.findFirst({
       where: { id: +gtn_id },
       include: {
@@ -33,11 +37,24 @@ export class ProfileService {
             postal_code: true,
           },
         },
-        sims: true,
         visas: true,
       },
     });
-    return toProfileResponseDto(profile);
+    return profile;
+  }
+
+  public async getProfileWithSim(gtn_id: number, phoneNumber) {
+    try {
+      const _profile = await this.getProfile(gtn_id);
+      const sim = await this.simService.findBySimNumberAndProfileId(
+        gtn_id,
+        phoneNumber,
+      );
+      const profile = { ..._profile, sim };
+      return profile;
+    } catch (error) {
+      throw error;
+    }
   }
 
   public async loginInfo(gtn_id: number): Promise<LoginInfoDto> {
@@ -143,10 +160,6 @@ export class ProfileService {
     }
   }
 
-  public async importUser(): Promise<string> {
-    return '';
-  }
-
   // profile find
   public async findByEmailAddress(email: string): Promise<ProfileDto> {
     try {
@@ -162,20 +175,6 @@ export class ProfileService {
     } catch (error) {
       console.log(error);
     }
-  }
-
-  public async createProfile(data: any): Promise<SuccessResponseDto> {
-    const profile = await this.prismaService.profiles.create({
-      data,
-    });
-    if (!profile)
-      throw new HttpException(`bad request`, HttpStatus.BAD_REQUEST);
-
-    const res: any = {
-      statusCode: 201,
-      message: 'Created user data.',
-    };
-    return res;
   }
 
   //csv

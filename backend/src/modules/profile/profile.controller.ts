@@ -26,6 +26,7 @@ import {
 import { LoginInfoDto } from 'src/modules/profile/dto/login_info.dto';
 import { ProfileDto } from './dto/response/profile.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { toProfileResponseDto } from 'src/common/helpers/dto-mapper.helper';
 
 @Controller()
 export class ProfileController {
@@ -42,7 +43,8 @@ export class ProfileController {
   @Get('/profile_info')
   async getProfile(@Req() req: IRequestWithUser): Promise<ProfileDto> {
     const { user } = req;
-    return await this.profileService.getProfile(user.gtn_id);
+    const profile = await this.profileService.getProfile(user.gtn_id);
+    return toProfileResponseDto(profile);
   }
 
   /**

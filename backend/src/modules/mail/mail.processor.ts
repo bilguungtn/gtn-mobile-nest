@@ -37,6 +37,26 @@ export class MailingConsumer {
   onFailed(job: Job, err: Error) {
     console.log(`Failed job ${job.name}.`);
   }
+
+  @Process('change-plan')
+  async changeCurrentPlan(job: Job) {
+    const { profile, plan, applicationDate } = job.data;
+    const mailData = {
+      to: `${this.configService.get<string>('mail.from_mail')}`,
+      context: {
+        title: '【GTN Mobile】プラン変更の申込がありました',
+        happiness_id: profile.sim.happiness_id,
+        name: profile.name,
+        birthday: new Date(profile.birthday),
+        email: profile.email,
+        planName: plan.name,
+        planPrice: plan.price,
+        applicationDate: applicationDate,
+      },
+    };
+    await this.mailService.sendChangePlan(mailData);
+  }
+
   @Process('suspend-line')
   async sendSuspendLine(job: Job) {
     const { profile, sim } = job.data;

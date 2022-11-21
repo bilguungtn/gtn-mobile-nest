@@ -73,3 +73,15 @@ export const toAvailablePlanDto = (data: PlanDto) => {
   };
   return plan;
 };
+
+// export const toPlanDto = (data: PlanDto) => {
+//   const plan: PlanDto = {
+//     id: data.id,
+//     name: data.name,
+//     happiness_name: data.happiness_name,
+//     plan_group_id: data.plan_group_id,
+//     capacity: data.capacity,
+//     price: data.price,
+//   };
+//   return plan;
+// };

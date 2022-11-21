@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Headers,
@@ -12,6 +13,8 @@ import { ApiBearerAuth, ApiHeader } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { IRequestWithUser } from 'src/common/interfaces/request_with_user.interface';
+import { SuccessResponseDto } from 'src/common/responses/success-response.dto';
+import { UpdatePlanRequestDto } from './dto/request/plan.dto';
 import {
   AvailablePlanResponseDto,
   CurrentPlanResponseDto,
@@ -42,6 +45,31 @@ export class PlanController {
     });
   }
 
+  /**
+   * Update current plan.
+   * @param {UpdatePlanRequestDto} data
+   * @returns {SuccessResponseDto}
+   */
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiHeader({
+    name: 'X-Phone-Number',
+    description: '電話番号(SIM番号)を投げてください example: 09000000000',
+    example: '09000000000',
+  })
+  @Patch('/current_plan')
+  async updateCurrentPlan(
+    @Body() data: any,
+    @Req() req: IRequestWithUser,
+    @Headers('X-Phone-Number') phoneNumber: string,
+  ): Promise<SuccessResponseDto> {
+    const { user } = req;
+    return await this.planService.updateCurrentPlan(data, {
+      gtnId: user.gtn_id,
+      phoneNumber,
+    });
+  }
+
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiHeader({
@@ -61,24 +89,24 @@ export class PlanController {
     });
   }
 
-  // /**
-  //  * Get profile data from csv.
-  //  * @returns {any}
-  //  */
-  // @UseInterceptors(
-  //   FileInterceptor('file_asset', {
-  //     storage: diskStorage({
-  //       destination: './files',
-  //     }),
-  //   }),
-  // )
-  // @Get('/plan_import')
-  // async initialPlanImport() {
-  //   return await this.planService.initialPlanImport();
-  // }
+  /**
+   * Get profile data from csv.
+   * @returns {any}
+   */
+  @UseInterceptors(
+    FileInterceptor('file_asset', {
+      storage: diskStorage({
+        destination: './files',
+      }),
+    }),
+  )
+  @Get('/plan_import')
+  async initialPlanImport() {
+    return await this.planService.initialPlanImport();
+  }
 
-  // @Get('/plan_import_price')
-  // async planImportPrice() {
-  //   return await this.planService.planImportPrice();
-  // }
+  @Get('/plan_import_price')
+  async planImportPrice() {
+    return await this.planService.planImportPrice();
+  }
 }

@@ -20,16 +20,21 @@ import {
 } from 'src/modules/plan/dto/dto-mapper.helper';
 import { SimsService } from 'src/modules/sims/sims.service';
 import { UserService } from 'src/modules/user/user.service';
+import { UpdatePlanRequestDto } from './dto/request/plan.dto';
+import { ProfileService } from 'src/modules/profile/profile.service';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 
 @Injectable()
 export class PlanService {
   constructor(
     private prismaService: PrismaService,
+    private readonly profileServcie: ProfileService,
     private readonly userService: UserService,
     private readonly simService: SimsService,
+    @InjectQueue('mailing') private readonly mailingQueue: Queue,
   ) {}
 
-  // TODO: database connection might change
   public async getAvailableChangePlans({
     gtnId,
     phoneNumber,
@@ -96,6 +101,31 @@ export class PlanService {
     } catch (err) {
       throw err;
     }
+  }
+
+  public async updateCurrentPlan(
+    data: UpdatePlanRequestDto,
+    { gtnId, phoneNumber },
+  ): Promise<SuccessResponseDto> {
+    const profile = await this.profileServcie.getProfileWithSim(
+      gtnId,
+      phoneNumber,
+    );
+    const plan = await this.prismaService.plans.findFirst({
+      where: { id: +data.plan_id },
+    });
+    if (!plan)
+      throw new HttpException('PLAN DOES NOT EXIST', HttpStatus.NO_CONTENT);
+    await this.mailingQueue.add('change-plan', {
+      profile,
+      plan,
+      applicationDate: data.application_date,
+    });
+    const res: any = {
+      statusCode: 200,
+      message: 'Sent email',
+    };
+    return res;
   }
 
   public async getMainPlanIdByUserId(id: string): Promise<string> {

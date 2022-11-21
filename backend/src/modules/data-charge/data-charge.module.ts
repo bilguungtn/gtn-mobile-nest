@@ -1,3 +1,4 @@
+import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 import { PrismaService, PrismaServiceOld } from 'prisma/prisma.service';
 import { PlanModule } from '../plan/plan.module';
@@ -9,7 +10,15 @@ import { DataChargeController } from './data-charge.controller';
 import { DataChargeService } from './data-charge.service';
 
 @Module({
-  imports: [PlanModule],
+  imports: [
+    BullModule.registerQueue({
+      name: 'mailing',
+      defaultJobOptions: {
+        removeOnComplete: true,
+      },
+    }),
+    PlanModule,
+  ],
   controllers: [DataChargeController],
   providers: [
     PrismaService,

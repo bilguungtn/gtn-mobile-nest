@@ -6,8 +6,17 @@ import { DataChargeService } from 'src/modules/data-charge/data-charge.service';
 import { ProfileService } from 'src/modules/profile/profile.service';
 import { SimsService } from '../sims/sims.service';
 import { UserService } from '../user/user.service';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
+  imports: [
+    BullModule.registerQueue({
+      name: 'mailing',
+      defaultJobOptions: {
+        removeOnComplete: true,
+      },
+    }),
+  ],
   controllers: [PlanController],
   providers: [
     PrismaService,

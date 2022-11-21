@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { BullModule } from '@nestjs/bull';
 import { DataTrafficService } from './data-traffic.service';
 import { DataTrafficController } from './data-traffic.controller';
 import { PlanService } from 'src/modules/plan/plan.service';
@@ -8,6 +9,14 @@ import { SimsService } from 'src/modules/sims/sims.service';
 import { UserService } from '../user/user.service';
 
 @Module({
+  imports: [
+    BullModule.registerQueue({
+      name: 'mailing',
+      defaultJobOptions: {
+        removeOnComplete: true,
+      },
+    }),
+  ],
   providers: [
     DataTrafficService,
     PrismaService,

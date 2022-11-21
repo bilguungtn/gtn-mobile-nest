@@ -10,6 +10,19 @@ export class MailService {
   ) {}
 
   /**
+   * Send email. Change current plan notification.
+   * @param {any} param0
+   */
+  sendChangePlan = async ({ to, context }: any) => {
+    await this.mailerService.sendMail({
+      to,
+      subject: context.title,
+      template: './change-plan-requested',
+      context,
+    });
+  };
+
+  /**
    * Send email. Suspend line notification.
    * @param {any} param0
    */

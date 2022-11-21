@@ -18,7 +18,7 @@ export class PlanDto {
   happiness_name: string;
   plan_group_id: number;
   capacity?: number;
-  carrier_type_code: number;
+  carrier_type_code?: number;
   price?: number;
 }
 
