@@ -88,25 +88,4 @@ export class PlanController {
       phoneNumber,
     });
   }
-
-  /**
-   * Get profile data from csv.
-   * @returns {any}
-   */
-  @UseInterceptors(
-    FileInterceptor('file_asset', {
-      storage: diskStorage({
-        destination: './files',
-      }),
-    }),
-  )
-  @Get('/plan_import')
-  async initialPlanImport() {
-    return await this.planService.initialPlanImport();
-  }
-
-  @Get('/plan_import_price')
-  async planImportPrice() {
-    return await this.planService.planImportPrice();
-  }
 }

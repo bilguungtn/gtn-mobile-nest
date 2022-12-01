@@ -1,11 +1,16 @@
 import { PrismaClient } from '@prisma/client';
 import { PrismaClient as PrismaClient2 } from '@prisma/client-2';
+import { importPlan, importPlanWithPrice } from './importCsvTask';
 
 const client = new PrismaClient();
 const client2 = new PrismaClient2();
 
 async function seeder() {
   try {
+    await importPlan();
+    // await importPlanWithPrice();
+    console.log('Success => Plan seeder.');
+
     await client.profiles.create({
       data: {
         id: 123456,

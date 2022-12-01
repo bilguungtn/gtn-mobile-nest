@@ -1,4 +1,4 @@
-import ECarriers from 'src/common/enums/carrier.enum';
+import ECarriers from '../enums/carrier.enum';
 
 export const formatCapacity = (capacityString) => {
   if (capacityString.includes('MB')) {
