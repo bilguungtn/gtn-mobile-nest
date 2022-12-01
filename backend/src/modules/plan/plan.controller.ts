@@ -59,10 +59,10 @@ export class PlanController {
   })
   @Patch('/current_plan')
   async updateCurrentPlan(
-    @Body() data: any,
+    @Body() data: UpdatePlanRequestDto,
     @Req() req: IRequestWithUser,
     @Headers('X-Phone-Number') phoneNumber: string,
-  ): Promise<SuccessResponseDto> {
+  ): Promise<any> {
     const { user } = req;
     return await this.planService.updateCurrentPlan(data, {
       gtnId: user.gtn_id,

@@ -49,17 +49,13 @@ export class DataChargeService {
     // const mainPlanId = await this.planService.getMainPlanIdByUserId(
     //   user.gtn_id,
     // );
-
     // if (mainPlanId !== parseInt(data.plan_id)) throw new NotFoundException();
-
     // const eloquentDatacharge = await this.prismaService.data_charges.findFirst({
     //   where: {
     //     id: data.data_charge_id,
     //   },
     // });
-
     // if (!eloquentDatacharge) throw new NotFoundException();
-
     // return eloquentDatacharge;
   }
 
@@ -67,19 +63,24 @@ export class DataChargeService {
     id: number,
     phoneNumber: string,
   ): Promise<any> {
-    // const mainPlanId = await this.planService.getMainPlanIdByUserId(id);
-    // const sims = await this.simService.getSims(+id);
+    const sims = await this.simService.getSims(+id);
+    const profile = await this.simService.findBySimNumberAndProfileId(
+      id,
+      phoneNumber,
+    );
+    console.log(profile, 'profile');
+    const mainPlanId = await this.planService.getMainPlanIdByUserId(String(id));
 
-    // const dataChargeData = await this.prismaService.plans.findFirst({
-    //   where: { id: mainPlanId },
-    //   select: {
-    //     plan_groups: {
-    //       select: {
-    //         data_charges: true,
-    //       },
-    //     },
-    //   },
-    // });
-    // return toDataChargeList(dataChargeData.plan_groups.data_charges);
+    const dataChargeData = await this.prismaService.plans.findFirst({
+      where: { id: +mainPlanId },
+      select: {
+        plan_groups: {
+          select: {
+            data_charges: true,
+          },
+        },
+      },
+    });
+    return toDataChargeList(dataChargeData.plan_groups.data_charges);
   }
 }

@@ -1,4 +1,11 @@
+import { IsDate, IsNotEmpty, IsString } from 'class-validator';
+
 export class UpdatePlanRequestDto {
-  plan_id: any;
-  application_date: any;
+  @IsNotEmpty()
+  @IsString()
+  plan_id: string;
+
+  @IsNotEmpty()
+  @IsString()
+  application_date: string;
 }

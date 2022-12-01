@@ -43,7 +43,7 @@ export class ProfileService {
     return profile;
   }
 
-  public async getProfileWithSim(gtn_id: number, phoneNumber) {
+  public async getProfileWithSim(gtn_id: number, phoneNumber: string) {
     try {
       const _profile = await this.getProfile(gtn_id);
       const sim = await this.simService.findBySimNumberAndProfileId(
